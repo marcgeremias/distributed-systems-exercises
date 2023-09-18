@@ -1,8 +1,0 @@
-Arquitectura distribuïda
-    - Sistema descentralitzat
-        -> 
-    - Sistema centralitzat
-        -> 
-
-LLenguatge? Com justifiquem?
-- Java per simplificació de linies en obrir sockets en comparació a C
