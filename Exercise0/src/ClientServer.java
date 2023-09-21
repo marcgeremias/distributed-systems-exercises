@@ -94,7 +94,6 @@ public class ClientServer {
         bufferedWriter.write("exit");
         bufferedWriter.newLine();
         bufferedWriter.flush();
-
         closeSocket();
     }
 }
