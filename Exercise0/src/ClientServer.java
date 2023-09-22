@@ -40,9 +40,28 @@ public class ClientServer {
     private static void update() throws IOException, InterruptedException {
         int value=0;
         for (int i=0; i<10; i++){
+            makeRequest("update");
             value = getCurrentValue();
             updateCurrentValue(value+1);
             sleep(1000);
+        }
+    }
+    private static int read() throws InterruptedException, IOException {
+        int value=0;
+        for (int i=0; i<10; i++){
+            makeRequest("read");
+            value = getCurrentValue();
+            sleep(1000);
+        }
+        return value;
+    }
+    private static void makeRequest(String request) {
+        try {
+            bufferedWriter.write(request);
+            bufferedWriter.newLine();
+            bufferedWriter.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -52,27 +71,13 @@ public class ClientServer {
         bufferedWriter.flush();
     }
 
-    private static int read() throws InterruptedException, IOException {
-        int value=0;
-        for (int i=0; i<10; i++){
-             value = getCurrentValue();
-             sleep(1000);
-        }
-        return value;
-    }
-
     private static int getCurrentValue() throws IOException {
-        bufferedWriter.write("read");
-        bufferedWriter.newLine();
-        bufferedWriter.flush();
-
         while(!bufferedReader.ready());
-
         String updatedValue = bufferedReader.readLine();
         System.out.println("Value: " + updatedValue);
-
         return Integer.parseInt(updatedValue);
     }
+
     public static void main(String[] args) throws IOException, InterruptedException {
         if(args.length == 0) return;
         openSocket(LOCAL_IP, LOCAL_PORT);

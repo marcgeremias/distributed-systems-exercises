@@ -18,22 +18,27 @@ public class ClientHandler extends Thread {
                 request = bufferedReader.readLine();
                 if (request.equals("exit")) break;
 
-                while(MasterServer.isBusy());
+                while(MasterServer.isBusy()){sleep(100);};
                 MasterServer.setBusy();
 
                 if (request.equals("read")) {
                     bufferedWriter.write(Integer.toString(MasterServer.readVariable()));
                     bufferedWriter.newLine();
                     bufferedWriter.flush();
-                } else {
-                    int newValue = Integer.parseInt(request);
-                    MasterServer.updateVariable(newValue);
+                } else if(request.equals("update")){
+                    bufferedWriter.write(Integer.toString(MasterServer.readVariable()));
+                    bufferedWriter.newLine();
+                    bufferedWriter.flush();
+                    while(bufferedReader.ready());
+                    String updatedValue = bufferedReader.readLine();
+                    MasterServer.updateVariable(Integer.parseInt(updatedValue));
                 }
+                System.out.println("Request: " + request + " - Current Value: " + MasterServer.readVariable());
                 MasterServer.cleanBusy();
             }
 
             clientSocket.close();
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
