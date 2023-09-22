@@ -49,6 +49,7 @@ public class MasterServer {
         ServerSocket serverSocket = new ServerSocket(1234);
         MasterServer masterServer = new MasterServer(serverSocket);
         cleanBusy();
+        variable = 0;
         masterServer.startServer();
     }
 
