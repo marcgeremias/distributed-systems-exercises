@@ -61,7 +61,5 @@ public class ParallelSearch {
             System.out.println("Number not found in the list.");
         }
 
-
-
     }
 }
