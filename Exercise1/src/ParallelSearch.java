@@ -29,27 +29,23 @@ public class ParallelSearch {
         }
     }
     public static void main(String[] args) throws InterruptedException {
-        // List of numbers to search through
         LinkedList<Integer> myList = new LinkedList();
-        // Hardcoded list of numbers (0 - 10)
+
         for (int i = 0; i < MAX_SIZE; i++) {
             myList.add(i);
         }
-        // Target number to search for --> introduced by user
+
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter the number to search for: ");
         int numberToFind = scanner.nextInt();
 
-        // Create a new instance of the ParallelSearch class
         ParallelSearch parallelSearch = new ParallelSearch(myList, numberToFind);
 
         Thread thread1 = new Thread(() -> parallelSearch.searchFromBeginning());
         Thread thread2 = new Thread(() -> parallelSearch.searchFromEnd());
 
-        // Start the threads
         thread1.start();
         thread2.start();
-        // Wait for the threads to finish
         thread1.join();
         thread2.join();
 
