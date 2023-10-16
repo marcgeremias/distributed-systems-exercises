@@ -26,8 +26,19 @@ public class MultithreadingSort {
         double seconds = (double) elapsedTime / 1_000_000_000.0;
         System.out.println("Elapsed time: " + seconds + " s");
 
-
         System.out.println("Sorted array using threads:" + Arrays.toString(sortedArray));
+
+
+        System.out.println("Normal MergeSort");
+        startTime = System.nanoTime();
+
+        // implementation without threads
+
+        endTime = System.nanoTime();
+        elapsedTime = endTime - startTime;
+
+        seconds = (double) elapsedTime / 1_000_000_000.0;
+        System.out.println("Elapsed time: " + seconds + " s");
     }
 
 }
