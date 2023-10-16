@@ -43,24 +43,10 @@ public class ParallelSearchArray {
         for (int i = 0; i < MAX_SIZE; i++) array[i] = i;
 
 
-        /*System.out.print("Enter the number to search for: ");
+        System.out.print("Enter the number to search for: ");
         toSearch = new Scanner(System.in).nextInt();
         System.out.print("Enter the number of threads to open: ");
-        numThreads = new Scanner(System.in).nextInt();*/
-
-
-        FileWriter myWriter = new FileWriter("share_100000000.txt");
-        for(int i=1; i<1000; i+=10) {
-            toSearch = 50000000;
-            numThreads = i;
-            long startTime = System.currentTimeMillis();
-            parallelSearch();
-            long endTime = System.currentTimeMillis();
-            System.out.println("Time taken: " + (endTime - startTime) + "ms");
-            myWriter.write(numThreads + "," + (endTime - startTime) + "\n");
-        }
-
-        myWriter.close();
+        numThreads = new Scanner(System.in).nextInt();
     }
 
 
