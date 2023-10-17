@@ -10,7 +10,7 @@ public class MultithreadingSort {
         final int ARRAY_SIZE = 1000;
 
         //******************************************************************************
-        //********************* Multithreaded Activity7.MergeSort Implementation *****************
+        //********************* Multithreaded MergeSort Implementation *****************
         //******************************************************************************
         System.out.println("\nMultithreading MergeSort:");
 
@@ -38,7 +38,7 @@ public class MultithreadingSort {
 
 
         //******************************************************************************
-        //************************ Normal Activity7.MergeSort Implementation *********************
+        //********************* Normal MergeSort Implementation ************************
         //******************************************************************************
         System.out.println("\nSingle-threaded MergeSort:");
 
