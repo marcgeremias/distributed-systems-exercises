@@ -1,16 +1,14 @@
-public class SearchBetween extends Thread{
+package Activity4_5;
+
+public class SearchThread  extends Thread {
     private final int[] array;
     private final int toSearch;
-    private final int from;
-    private final int to;
     private final int threadId;
     private int result = -1;
 
-    public SearchBetween(int[] array, int toSearch, int from, int to, int threadId) {
+    public SearchThread(int[] array, int toSearch, int threadId) {
         this.array = array;
         this.toSearch = toSearch;
-        this.from = from;
-        this.to = to;
         this.threadId = threadId;
     }
 
@@ -20,12 +18,11 @@ public class SearchBetween extends Thread{
 
     @Override
     public void run() {
-        for (int i = from; i < to; i++) {
+        for (int i = 0; i < array.length; i++) {
             if (array[i] == toSearch) {
                 result = i;
-                return;
+                break;
             }
         }
     }
-
 }

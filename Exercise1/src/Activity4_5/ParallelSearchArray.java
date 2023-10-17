@@ -1,7 +1,6 @@
-import java.io.File;
-import java.io.FileWriter;
+package Activity4_5;
+
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class ParallelSearchArray {
@@ -13,7 +12,7 @@ public class ParallelSearchArray {
 
     public static int parallelSearch () throws InterruptedException {
         SearchBetween[] threads = new SearchBetween[numThreads];
-        //SearchThread[] threads = new SearchThread[numThreads];
+        //Activity4_5.SearchThread[] threads = new Activity4_5.SearchThread[numThreads];
         int subArraySize = array.length / numThreads;
         int to = subArraySize;
         int from = 0;
@@ -21,7 +20,7 @@ public class ParallelSearchArray {
         // Start all threads
         for(int i = 0; i < numThreads; i++){
             threads[i] = new SearchBetween(array, toSearch, from, to, i);
-            //threads[i] = new SearchThread(Arrays.copyOfRange(array, from, to), toSearch, i);
+            //threads[i] = new Activity4_5.SearchThread(Arrays.copyOfRange(array, from, to), toSearch, i);
             threads[i].start();
             from = to;
             to += subArraySize;
@@ -47,6 +46,7 @@ public class ParallelSearchArray {
         toSearch = new Scanner(System.in).nextInt();
         System.out.print("Enter the number of threads to open: ");
         numThreads = new Scanner(System.in).nextInt();
+        parallelSearch();
     }
 
 

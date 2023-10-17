@@ -1,3 +1,5 @@
+package Activity3;
+
 import java.util.LinkedList;
 
 public class DescendantSearch extends Thread{
