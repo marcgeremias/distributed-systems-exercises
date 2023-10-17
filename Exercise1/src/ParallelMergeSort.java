@@ -1,17 +1,17 @@
 import java.util.Arrays;
 
-public class ParallelMergeSorter implements Runnable {
-    private int[] inputArray;
+public class ParallelMergeSort implements Runnable {
+    private int[] unsortedArray;
     private int[] sortedArray;
 
-    public ParallelMergeSorter(int[] inputArray, int[] sortedArray) {
-        this.inputArray = inputArray;
+    public ParallelMergeSort(int[] unsortedArray, int[] sortedArray) {
+        this.unsortedArray = unsortedArray;
         this.sortedArray = sortedArray;
     }
 
     @Override
     public void run() {
-        mergeSort(inputArray, inputArray.length);
+        mergeSort(unsortedArray, unsortedArray.length);
     }
 
     private void mergeSort(int[] array, int length) {
@@ -21,8 +21,8 @@ public class ParallelMergeSorter implements Runnable {
         int[] leftHalf = Arrays.copyOfRange(array, 0, mid);
         int[] rightHalf = Arrays.copyOfRange(array, mid, length);
 
-        Thread leftThread = new Thread(new ParallelMergeSorter(leftHalf, sortedArray));
-        Thread rightThread = new Thread(new ParallelMergeSorter(rightHalf, sortedArray));
+        Thread leftThread = new Thread(new ParallelMergeSort(leftHalf, sortedArray));
+        Thread rightThread = new Thread(new ParallelMergeSort(rightHalf, sortedArray));
 
         leftThread.start();
         rightThread.start();

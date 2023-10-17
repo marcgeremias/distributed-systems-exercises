@@ -1,44 +1,60 @@
 import java.util.Arrays;
+import java.util.Random;
 
 public class MultithreadingSort {
     public static void main(String[] args) {
-        System.out.println("Multithreading MergeSort");
-        int[] array = {5, 6, 7, 3, 10, 2, 9, 1, 8, 4, 1, 4, 17, 58, 33, 50, 40};
-        int[] sortedArray = new int[array.length];
-        System.out.println("Unsorted array:" + Arrays.toString(array));
+        //******************************************************************************
+        //********************* Multithreaded MergeSort Implementation *****************
+        //******************************************************************************
+        System.out.println("\nMultithreading MergeSort:");
+
+        int[] unsortedArray = new int[4];
+        int[] tmp = new int[unsortedArray.length];
+        Random random = new Random();
+        for (int i = 0; i < unsortedArray.length; i++) {
+            unsortedArray[i] = random.nextInt(1000);
+            tmp[i] = unsortedArray[i];
+        }
+        int[] sortedArray = new int[unsortedArray.length];
+
+        System.out.println("Unsorted array:" + Arrays.toString(unsortedArray));
 
         long startTime = System.nanoTime();
 
-        ParallelMergeSorter parallelMergeSort = new ParallelMergeSorter(array, sortedArray);
-        Thread mainThread = new Thread(parallelMergeSort);
-
-        mainThread.start();
-
-        try {
-            mainThread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        new ParallelMergeSort(unsortedArray, sortedArray).run();
 
         long endTime = System.nanoTime();
         long elapsedTime = endTime - startTime;
-
         double seconds = (double) elapsedTime / 1_000_000_000.0;
-        System.out.println("Elapsed time: " + seconds + " s");
 
         System.out.println("Sorted array using threads:" + Arrays.toString(sortedArray));
+        System.out.println("Elapsed time Multithreaded MergeSort: " + seconds + " s");
 
 
-        System.out.println("Normal MergeSort");
-        startTime = System.nanoTime();
+        //******************************************************************************
+        //************************ Normal MergeSort Implementation *********************
+        //******************************************************************************
+        System.out.println("\nSingle-threaded MergeSort:");
 
-        // implementation without threads
+        for (int i = 0; i < unsortedArray.length; i++) {
+            unsortedArray[i] = tmp[i];
+            sortedArray[i] = 0;
+        }
 
-        endTime = System.nanoTime();
-        elapsedTime = endTime - startTime;
+        System.out.println("Unsorted array:" + Arrays.toString(unsortedArray));
 
-        seconds = (double) elapsedTime / 1_000_000_000.0;
-        System.out.println("Elapsed time: " + seconds + " s");
+        long startTimeNormal = System.nanoTime();
+
+        MergeSort mergeSort = new MergeSort(unsortedArray, sortedArray);
+        mergeSort.mergeSort(unsortedArray, unsortedArray.length);
+
+        long endTimeNormal = System.nanoTime();
+        long elapsedTimeNormal = endTimeNormal - startTimeNormal;
+        double secondsNormal = (double) elapsedTimeNormal / 1_000_000_000.0;
+
+        System.out.println("Sorted array using threads:" + Arrays.toString(sortedArray));
+        System.out.println("Elapsed time Normal MergeSort: " + secondsNormal + " s");
+
     }
 
 }
