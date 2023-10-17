@@ -1,38 +1,30 @@
-import java.util.Arrays;
+package Activity7;
 
-public class ParallelMergeSort implements Runnable {
+public class MergeSort {
     private int[] unsortedArray;
     private int[] sortedArray;
 
-    public ParallelMergeSort(int[] unsortedArray, int[] sortedArray) {
+    public MergeSort(int[] unsortedArray, int[] sortedArray) {
         this.unsortedArray = unsortedArray;
         this.sortedArray = sortedArray;
     }
 
-    @Override
-    public void run() {
-        mergeSort(unsortedArray, unsortedArray.length);
-    }
-
-    private void mergeSort(int[] array, int length) {
+    public void mergeSort(int[] array, int length) {
         if (length < 2) return;
 
         int mid = length / 2;
-        int[] leftHalf = Arrays.copyOfRange(array, 0, mid);
-        int[] rightHalf = Arrays.copyOfRange(array, mid, length);
+        int[] leftHalf = new int[mid];
+        int[] rightHalf = new int[length - mid];
 
-        Thread leftThread = new Thread(new ParallelMergeSort(leftHalf, sortedArray));
-        Thread rightThread = new Thread(new ParallelMergeSort(rightHalf, sortedArray));
-
-        leftThread.start();
-        rightThread.start();
-
-        try {
-            leftThread.join();
-            rightThread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        for (int i = 0; i < mid; i++) {
+            leftHalf[i] = array[i];
         }
+        for (int i = mid; i < length; i++) {
+            rightHalf[i - mid] = array[i];
+        }
+
+        mergeSort(leftHalf, mid);
+        mergeSort(rightHalf, length - mid);
 
         merge(array, leftHalf, rightHalf);
 

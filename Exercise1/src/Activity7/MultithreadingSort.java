@@ -1,14 +1,20 @@
+package Activity7;
+
+import Activity7.MergeSort;
+
 import java.util.Arrays;
 import java.util.Random;
 
 public class MultithreadingSort {
     public static void main(String[] args) {
+        final int ARRAY_SIZE = 1000;
+
         //******************************************************************************
-        //********************* Multithreaded MergeSort Implementation *****************
+        //********************* Multithreaded Activity7.MergeSort Implementation *****************
         //******************************************************************************
         System.out.println("\nMultithreading MergeSort:");
 
-        int[] unsortedArray = new int[4];
+        int[] unsortedArray = new int[ARRAY_SIZE];
         int[] tmp = new int[unsortedArray.length];
         Random random = new Random();
         for (int i = 0; i < unsortedArray.length; i++) {
@@ -32,7 +38,7 @@ public class MultithreadingSort {
 
 
         //******************************************************************************
-        //************************ Normal MergeSort Implementation *********************
+        //************************ Normal Activity7.MergeSort Implementation *********************
         //******************************************************************************
         System.out.println("\nSingle-threaded MergeSort:");
 

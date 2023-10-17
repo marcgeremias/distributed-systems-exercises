@@ -1,28 +1,40 @@
-public class MergeSort {
+package Activity7;
+
+import java.util.Arrays;
+
+public class ParallelMergeSort implements Runnable {
     private int[] unsortedArray;
     private int[] sortedArray;
 
-    public MergeSort(int[] unsortedArray, int[] sortedArray) {
+    public ParallelMergeSort(int[] unsortedArray, int[] sortedArray) {
         this.unsortedArray = unsortedArray;
         this.sortedArray = sortedArray;
     }
 
-    public void mergeSort(int[] array, int length) {
+    @Override
+    public void run() {
+        mergeSort(unsortedArray, unsortedArray.length);
+    }
+
+    private void mergeSort(int[] array, int length) {
         if (length < 2) return;
 
         int mid = length / 2;
-        int[] leftHalf = new int[mid];
-        int[] rightHalf = new int[length - mid];
+        int[] leftHalf = Arrays.copyOfRange(array, 0, mid);
+        int[] rightHalf = Arrays.copyOfRange(array, mid, length);
 
-        for (int i = 0; i < mid; i++) {
-            leftHalf[i] = array[i];
-        }
-        for (int i = mid; i < length; i++) {
-            rightHalf[i - mid] = array[i];
-        }
+        Thread leftThread = new Thread(new ParallelMergeSort(leftHalf, sortedArray));
+        Thread rightThread = new Thread(new ParallelMergeSort(rightHalf, sortedArray));
 
-        mergeSort(leftHalf, mid);
-        mergeSort(rightHalf, length - mid);
+        leftThread.start();
+        rightThread.start();
+
+        try {
+            leftThread.join();
+            rightThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         merge(array, leftHalf, rightHalf);
 
