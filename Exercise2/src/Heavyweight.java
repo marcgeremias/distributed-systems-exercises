@@ -80,7 +80,6 @@ public class Heavyweight extends Thread {
         try {
             serverSocket = new ServerSocket(port);
             clientSocket = serverSocket.accept();
-            bufferedWriter = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
             bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -91,7 +90,6 @@ public class Heavyweight extends Thread {
         try {
             clientSocket = new Socket("localhost", otherPort);
             bufferedWriter = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
-            bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
