@@ -1,56 +1,54 @@
 import java.io.*;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Lightweight extends Thread{
     private static final int NUM_PRINTS = 10;
-    private BufferedWriter bufferedWriter;
-    private BufferedReader bufferedReader;
+    private ServerSocket serverSocket;
     private LamportClock clock;
-    private Socket heavySocket;
     private String heavyId;
-    private int port;
+    private int heavyPort;
+    private int myPort;
     private int id;
 
-    public Lightweight(LamportClock clock, String heavyId, int id, int port) {
+    public Lightweight(String heavyId, int id, int heavyPort, int myPort) {
+        this.clock = new LamportClock();
+        this.heavyPort = heavyPort;
         this.heavyId = heavyId;
-        this.clock = clock;
-        this.port = port;
+        this.myPort = myPort;
         this.id = id;
     }
 
-    public String getFullId() {
-        return heavyId + id;
+    @Override
+    public void run() {
+        startServer();
+        System.out.println("Lightweight with port " + myPort + " started their server");
+        while(true){
+            waitHeavyWeight();
+            // TODO requestCS();
+            /*for (int i=0; i<NUM_PRINTS; i++){
+                System.out.println("I'm lightweight process " + getFullId());
+                Heavyweight.waitSecond();
+            }*/
+            // TODO releaseCS();
+            // TODO notifyHeavyWeight();*/
+        }
     }
 
-    public void connectToHeavy() {
+    private void startServer() {
         try {
-            heavySocket = new Socket("localhost", port);
-            bufferedReader = new BufferedReader(new InputStreamReader(heavySocket.getInputStream()));
-            bufferedWriter = new BufferedWriter(new OutputStreamWriter(heavySocket.getOutputStream()));
+            serverSocket = new ServerSocket(myPort);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    @Override
-    public void run() {
-        connectToHeavy();
-        System.out.println("Lightweight " + getFullId() + " connected to Heavyweight " + heavyId);
-        while(true){
-            waitHeavyWeight();
-            // TODO requestCS();
-            for (int i=0; i<NUM_PRINTS; i++){
-                System.out.println("I'm lightweight process " + getFullId());
-                Heavyweight.waitSecond();
-            }
-            // TODO releaseCS();
-            // TODO notifyHeavyWeight();
-        }
-    }
-
     private void waitHeavyWeight() {
         try {
+            Socket heavySocket = serverSocket.accept();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(heavySocket.getInputStream()));
             bufferedReader.readLine();
+            heavySocket.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

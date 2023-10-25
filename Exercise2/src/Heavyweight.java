@@ -5,31 +5,39 @@ import java.util.ArrayList;
 
 public class Heavyweight extends Thread {
     private static final int NUM_LIGHTWEIGHTS = 3;
-    private ArrayList<Socket> lightweightsSockets;
-    private BufferedWriter otherHeavyOut;
-    private BufferedReader otherHeavyIn;
+    private ArrayList<Integer> lightweightPorts;
     private ServerSocket serverSocket;
-    private int answersfromLightweigth;
-    private Socket clientSocket;
-    private int otherPort;
+    private int answersfromLightweight;
+    private int otherHeavyPort;
     private boolean token;
     private String id;
-    private int port;
+    private int myPort;
 
-    public Heavyweight(boolean token, String id, int port, int otherPort) {
-        lightweightsSockets = new ArrayList<>();
-        answersfromLightweigth = 0;
-        this.otherPort = otherPort;
+    public Heavyweight(boolean token, String id, int myPort, int otherHeavyPort) {
+        answersfromLightweight = 0;
+        this.otherHeavyPort = otherHeavyPort;
         this.token = token;
-        this.port = port;
+        this.myPort = myPort;
         this.id = id;
+
+        generateLightweightPorts();
+    }
+
+    private void generateLightweightPorts() {
+        lightweightPorts = new ArrayList<>();
+        for (int i = 0; i < NUM_LIGHTWEIGHTS; i++) {
+            lightweightPorts.add(myPort + i + 1);
+        }
     }
 
     private void sendTokenToHeavyweight() {
         try {
-            otherHeavyOut.write("token");
-            otherHeavyOut.newLine();
-            otherHeavyOut.flush();
+            Socket heavySocket = new Socket("localhost", otherHeavyPort);
+            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(heavySocket.getOutputStream()));
+            bufferedWriter.write("token");
+            bufferedWriter.newLine();
+            bufferedWriter.flush();
+            heavySocket.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -43,20 +51,10 @@ public class Heavyweight extends Thread {
         }
     }
 
-
-
     @Override
     public void run() {
-        if(token){
-            startServer();
-            connectToHeavy();
-        }else{
-            connectToHeavy();
-            startServer();
-        }
+        startServer();
         summonLightweights();
-
-        // TODO Summon the 3 lightweight processes
         while (true) {
             while (!token) listenHeavyweight();
             System.out.println("Heavyweight " + id + " received token");
@@ -64,39 +62,31 @@ public class Heavyweight extends Thread {
                 sendActionToLightweight();
             }
 
-            while(answersfromLightweigth < NUM_LIGHTWEIGHTS) {
+            /*while(answersfromLightweight < NUM_LIGHTWEIGHTS) {
                 listenLightweight();
-            }
-
-            //waitSecond(); // DEBUGGING
+            }*/
+            waitSecond(); // DEBUGGING
             token = false;
-            sendTokenToHeavyweight(); // Pass the token
+            sendTokenToHeavyweight();
         }
     }
 
-
-
     private void summonLightweights() {
         for (int i = 0; i < NUM_LIGHTWEIGHTS; i++) {
-            Lightweight lightweight = new Lightweight(new LamportClock(), id, i, port);
+            Lightweight lightweight = new Lightweight(id, i, myPort, lightweightPorts.get(i));
             lightweight.start();
-            // TODO Create ports for each lightweight process and pass them to the Lightwheight constructor
-            try {
-                clientSocket = serverSocket.accept();
-                lightweightsSockets.add(clientSocket);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
         }
     }
 
     private void sendActionToLightweight() {
-        for (Socket socket : lightweightsSockets) {
+        for (Integer lightweightPort : lightweightPorts) {
             try {
-                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+                Socket lightweightSocket = new Socket("localhost", lightweightPort);
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(lightweightSocket.getOutputStream()));
                 bufferedWriter.write("print");
                 bufferedWriter.newLine();
                 bufferedWriter.flush();
+                lightweightSocket.close();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -104,40 +94,33 @@ public class Heavyweight extends Thread {
     }
 
     private void listenLightweight() {
-        for (Socket socket : lightweightsSockets) {
-            try {
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                bufferedReader.readLine();
-                answersfromLightweigth++;
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+        try {
+            Socket lightweightSocket = serverSocket.accept();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(lightweightSocket.getInputStream()));
+            bufferedReader.readLine();
+            lightweightSocket.close();
+            answersfromLightweight++;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
     private void listenHeavyweight(){
         try {
-            otherHeavyIn.readLine();
+            Socket heavySocket = serverSocket.accept();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(heavySocket.getInputStream()));
+            bufferedReader.readLine();
+            heavySocket.close();
             token = true;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
     }
 
     private void startServer(){
         try {
-            serverSocket = new ServerSocket(port);
-            clientSocket = serverSocket.accept();
-            otherHeavyIn = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void connectToHeavy(){
-        try {
-            clientSocket = new Socket("localhost", otherPort);
-            otherHeavyOut = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
+            serverSocket = new ServerSocket(myPort);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
