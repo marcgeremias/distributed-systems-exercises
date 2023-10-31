@@ -1,18 +1,24 @@
 public class LamportClock {
-    private int ticks;
+    private int tics;
+
     public LamportClock() {
-        ticks = 0;
+        this.tics = 0;
     }
     public int getValue() {
-        return ticks;
+        return tics;
     }
+    // To be used in internal events
     public void tick() {
-        ticks++;
+        tics++;
     }
+    // Increment tics before sending an action
     public void sendAction() {
         tick();
+        // TODO: send message to other process
     }
     public void receiveAction(int receivedValue) {
-        this.ticks = Math.max(this.ticks, receivedValue) + 1;
+        this.tics = Math.max(this.tics, receivedValue) + 1;
     }
+
+
 }
