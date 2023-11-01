@@ -5,14 +5,12 @@ import java.net.Socket;
 public class Lightweight extends Thread{
     private static final int NUM_PRINTS = 10;
     private ServerSocket serverSocket;
-    private LamportMutex clock;
     private String heavyId;
     private int heavyPort;
     private int myPort;
     private int id;
 
     public Lightweight(String heavyId, int id, int heavyPort, int myPort) {
-        this.clock = new LamportMutex();
         this.heavyPort = heavyPort;
         this.heavyId = heavyId;
         this.myPort = myPort;
