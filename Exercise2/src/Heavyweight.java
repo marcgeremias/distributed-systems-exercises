@@ -29,15 +29,9 @@ public class Heavyweight extends Thread {
         }
     }
 
-    private int getCurrentTimestamp() {
-        long currentTimeMillis = System.currentTimeMillis();
-        return (int) currentTimeMillis;
-    }
-
-    private void sendActionToLightweight() {
+    private void sendActionToLightweights() {
         for (Integer lightweightPort : lightweightPorts) {
             try {
-                System.out.println("Heavyweight " + id + " sending action to lightweight " + lightweightPort);
                 Socket lightweightSocket = new Socket("localhost", lightweightPort);
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(lightweightSocket.getOutputStream()));
                 bufferedWriter.write("print");
@@ -49,6 +43,7 @@ public class Heavyweight extends Thread {
             }
         }
     }
+
     private void listenLightweight() {
         try {
             Socket lightweightSocket = serverSocket.accept();
@@ -86,9 +81,12 @@ public class Heavyweight extends Thread {
     }
     private void summonLightweights() {
         for (int i = 0; i < NUM_LIGHTWEIGHTS; i++) {
-            Lightweight lightweight = new Lightweight(id, i, myPort, lightweightPorts.get(i));
+            ArrayList<Integer> portsWithoutMe = new ArrayList<>(lightweightPorts);
+            portsWithoutMe.remove(i);
+            Lightweight lightweight = new Lightweight(i, myPort, lightweightPorts.get(i), portsWithoutMe);
             lightweight.start();
         }
+        System.out.println("Summoned and started all lightweight processes from heavyweight " + id);
     }
     private void startServer(){
         try {
@@ -112,13 +110,13 @@ public class Heavyweight extends Thread {
         while (true) {
             while (!token) listenHeavyweight();
             System.out.println("Heavyweight " + id + " received token");
-            for (int i=0; i<NUM_LIGHTWEIGHTS; i++) {
-                sendActionToLightweight();
-            }
 
-            /*while(answersfromLightweight < NUM_LIGHTWEIGHTS) {
+            // Send print actions to all Lig
+            sendActionToLightweights();
+
+            while(answersfromLightweight < NUM_LIGHTWEIGHTS) {
                 listenLightweight();
-            }*/
+            }
 
             waitSecond(); // DEBUGGING
 
