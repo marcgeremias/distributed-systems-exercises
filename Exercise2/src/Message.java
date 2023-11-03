@@ -1,4 +1,14 @@
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+
 public class Message {
+    public static final String MESSAGE_RELEASE = "release";
+    public static final String MESSAGE_REQUEST = "request";
+    public static final String MESSAGE_PRINT = "print";
+    public static final String MESSAGE_ACK = "ack";
+    public static final String MESSAGE_DONE = "done";
+
     private int srcId;
     private int srcPort;
     private String tag;
@@ -38,5 +48,43 @@ public class Message {
 
     public int getTimestamp() {
         return timestamp;
+    }
+
+    public static void sendMsg(Message msg, Integer port) {
+        try {
+            Socket socket = new Socket("localhost", port);
+            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            bufferedWriter.write(msg.toString());
+            bufferedWriter.newLine();
+            bufferedWriter.flush();
+            socket.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void sendMsg(String msg, Integer port) {
+        try {
+            Socket socket = new Socket("localhost", port);
+            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            bufferedWriter.write(msg);
+            bufferedWriter.newLine();
+            bufferedWriter.flush();
+            socket.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static String getMsg(ServerSocket serverSocket){
+        try {
+            Socket lightweightSocket = serverSocket.accept();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(lightweightSocket.getInputStream()));
+            String line = bufferedReader.readLine();
+            lightweightSocket.close();
+            return line;
+        }catch (IOException e){
+            throw new RuntimeException(e);
+        }
     }
 }

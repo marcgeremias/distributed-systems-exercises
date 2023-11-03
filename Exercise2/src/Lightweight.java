@@ -9,8 +9,8 @@ public class Lightweight extends Thread{
     int numOkay;
 
     private static final int NUM_LIGHTWEIGHTS = 3;
-    private ArrayList<Integer> lightweightPorts;
     private static final int NUM_PRINTS = 10;
+    private ArrayList<Integer> lightweightPorts;
     private ServerSocket serverSocket;
     private int heavyPort;
     private int myPort;
@@ -30,19 +30,8 @@ public class Lightweight extends Thread{
         for (int i = 0; i < NUM_LIGHTWEIGHTS; i++) requestQ[i] = Integer.MAX_VALUE;
     }
 
-
-
     private void notifyHeavyWeight() {
-        try {
-            Socket lightweightSocket = new Socket("localhost", heavyPort);
-            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(lightweightSocket.getOutputStream()));
-            bufferedWriter.write("done");
-            bufferedWriter.newLine();
-            bufferedWriter.flush();
-            lightweightSocket.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        Message.sendMsg(Message.MESSAGE_DONE, heavyPort);
     }
 
     private void waitHeavyWeight() {
@@ -61,33 +50,20 @@ public class Lightweight extends Thread{
     private synchronized void requestCS() {
         clock.tick();
         requestQ[myId] = clock.getValue();
-        broadcastMsg(new Message(myId, myPort, "request", requestQ[myId]));
+        broadcastMsg(new Message(myId, myPort, Message.MESSAGE_REQUEST, requestQ[myId]));
         while(!okayCS());
     }
 
     private void broadcastMsg(Message msg) {
         for (Integer lightweightPort : lightweightPorts) {
-            sendMsg(msg, lightweightPort);
-        }
-    }
-
-    private void sendMsg(Message msg, Integer lightweightPort) {
-        try {
-            Socket lightweightSocket = new Socket("localhost", lightweightPort);
-            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(lightweightSocket.getOutputStream()));
-            bufferedWriter.write(msg.toString());
-            bufferedWriter.newLine();
-            bufferedWriter.flush();
-            lightweightSocket.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            Message.sendMsg(msg, lightweightPort);
         }
     }
 
     private void releaseCS() {
         clock.tick();
         requestQ[myId] = Integer.MAX_VALUE;
-        broadcastMsg(new Message(myId, myPort, "release", requestQ[myId]));
+        broadcastMsg(new Message(myId, myPort, Message.MESSAGE_RELEASE, requestQ[myId]));
         numOkay = 0;
     }
     private synchronized boolean okayCS() {
@@ -109,34 +85,26 @@ public class Lightweight extends Thread{
     }
 
     private void listenServerConnections() {
-        try {
-            while(true){
-                Socket lightweightSocket = serverSocket.accept();
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(lightweightSocket.getInputStream()));
-                String line = bufferedReader.readLine();
-                if (line.equals("print")) {
-                    this.setStart(true);
-                    System.out.println("Lightweight " + myId + " ready to start");
-                }
-                else {
-                    Message msg = new Message(line);
-                    handleMsg(msg);
-                }
-                lightweightSocket.close();
+        while(true){
+            String line = Message.getMsg(serverSocket);
+            if (line.equals(Message.MESSAGE_PRINT)) {
+                this.setStart(true);
+                System.out.println("Lightweight " + myId + " ready to start");
+            } else {
+                Message msg = new Message(line);
+                handleMsg(msg);
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 
     private void handleMsg(Message msg) {
         clock.receiveAction(msg.getTimestamp());
-        if(msg.getTag().equals("request")){
+        if(msg.getTag().equals(Message.MESSAGE_REQUEST)){
             requestQ[msg.getSrcId()] = msg.getTimestamp();
-            sendMsg(new Message(myId, myPort, "ack", clock.getValue()), msg.getSrcPort());
-        }else if(msg.getTag().equals("ack")){
+            Message.sendMsg(new Message(myId, myPort, Message.MESSAGE_ACK, clock.getValue()), msg.getSrcPort());
+        }else if(msg.getTag().equals(Message.MESSAGE_ACK)){
             numOkay++;
-        } else if(msg.getTag().equals("release")){
+        } else if(msg.getTag().equals(Message.MESSAGE_RELEASE)){
             requestQ[msg.getSrcId()] = Integer.MAX_VALUE;
         }
     }
