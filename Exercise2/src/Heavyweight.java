@@ -31,54 +31,24 @@ public class Heavyweight extends Thread {
 
     private void sendActionToLightweights() {
         for (Integer lightweightPort : lightweightPorts) {
-            try {
-                Socket lightweightSocket = new Socket("localhost", lightweightPort);
-                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(lightweightSocket.getOutputStream()));
-                bufferedWriter.write("print");
-                bufferedWriter.newLine();
-                bufferedWriter.flush();
-                lightweightSocket.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+                Message.sendMsg(Message.MESSAGE_PRINT, lightweightPort);
         }
     }
 
     private void listenLightweight() {
-        try {
-            Socket lightweightSocket = serverSocket.accept();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(lightweightSocket.getInputStream()));
-            bufferedReader.readLine();
-            lightweightSocket.close();
-            answersfromLightweight++;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        Message.getMsg(serverSocket);
+        answersfromLightweight++;
     }
-    private void sendTokenToHeavyweight() {
-        try {
-            Socket heavySocket = new Socket("localhost", otherHeavyPort);
-            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(heavySocket.getOutputStream()));
-            bufferedWriter.write("token");
-            bufferedWriter.newLine();
-            bufferedWriter.flush();
-            heavySocket.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    private void listenHeavyweight(){
-        try {
-            Socket heavySocket = serverSocket.accept();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(heavySocket.getInputStream()));
-            bufferedReader.readLine();
-            heavySocket.close();
-            token = true;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
 
+    private void sendTokenToHeavyweight() {
+        Message.sendMsg(Message.MESSAGE_TOKEN, otherHeavyPort);
     }
+
+    private void listenHeavyweight(){
+        Message.getMsg(serverSocket);
+        token = true;
+    }
+
     private void summonLightweights() {
         for (int i = 0; i < NUM_LIGHTWEIGHTS; i++) {
             ArrayList<Integer> portsWithoutMe = new ArrayList<>(lightweightPorts);
@@ -88,6 +58,7 @@ public class Heavyweight extends Thread {
         }
         System.out.println("Summoned and started all lightweight processes from heavyweight " + id);
     }
+
     private void startServer(){
         try {
             serverSocket = new ServerSocket(myPort);
@@ -95,6 +66,7 @@ public class Heavyweight extends Thread {
             throw new RuntimeException(e);
         }
     }
+
     public static void waitSecond() {
         try {
             sleep(1000);
@@ -111,7 +83,6 @@ public class Heavyweight extends Thread {
             while (!token) listenHeavyweight();
             System.out.println("Heavyweight " + id + " received token");
 
-            // Send print actions to all Lig
             sendActionToLightweights();
 
             while(answersfromLightweight < NUM_LIGHTWEIGHTS) {
