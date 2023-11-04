@@ -118,9 +118,8 @@ public class Heavyweight extends Thread {
                 listenLightweight();
             }
 
-            waitSecond(); // DEBUGGING
-
             token = false;
+            answersfromLightweight = 0;
             sendTokenToHeavyweight();
         }
     }

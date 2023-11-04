@@ -22,7 +22,7 @@ public class Lightweight extends Thread{
     //int numOkay;
 
     private static final int NUM_LIGHTWEIGHTS = 3;
-    private static final int NUM_PRINTS = 10;
+    private static final int NUM_PRINTS = 1;
     private ArrayList<Integer> lightweightPorts;
     private ServerSocket serverSocket;
     private int heavyPort;
@@ -124,13 +124,13 @@ public class Lightweight extends Thread{
         if(msg.getTag().equals(Message.MESSAGE_REQUEST)){
             //requestQ.set(msg.getSrcId(), msg.getTimestamp());
             //queue.add(msg);
-            clock.receiveAction(msg.getTimestamp());
+            //clock.receiveAction(msg.getTimestamp());
             synchronized (queue) {
                 queue.add(msg);
             }
             Message.sendMsg(new Message(myId, myPort, Message.MESSAGE_ACK, clock.getValue()), msg.getSrcPort());
         }else if(msg.getTag().equals(Message.MESSAGE_ACK)){
-            clock.receiveAction(msg.getTimestamp());
+            //clock.receiveAction(msg.getTimestamp());
             numOkay.getAndIncrement();
         } else if(msg.getTag().equals(Message.MESSAGE_RELEASE)){
             //requestQ.set(msg.getSrcId(), Integer.MAX_VALUE);
