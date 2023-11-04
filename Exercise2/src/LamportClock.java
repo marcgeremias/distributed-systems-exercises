@@ -10,7 +10,9 @@ public class LamportClock {
     public void tick() {
         ticks++;
     }
-    public void sendAction() {tick();}
+    public void sendAction() {
+        tick();
+    }
     public void receiveAction(int receivedValue) {
         this.ticks = Math.max(this.ticks, receivedValue) + 1;
     }
