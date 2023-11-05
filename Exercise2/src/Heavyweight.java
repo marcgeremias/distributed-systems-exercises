@@ -52,12 +52,12 @@ public class Heavyweight extends Thread {
         for (int i = 0; i < NUM_LIGHTWEIGHTS; i++) {
             ArrayList<Integer> portsWithoutMe = new ArrayList<>(lightweightPorts);
             portsWithoutMe.remove(i);
-            // TODO Implmement interface or abstract class for lightweight
+
             if(id.equals(Main.PROCESS_A_ID)){
-                LamportLightweight lightweight = new LamportLightweight(i, myPort, lightweightPorts.get(i), portsWithoutMe);
+                LamportMutex lightweight = new LamportMutex(i, myPort, lightweightPorts.get(i), portsWithoutMe);
                 lightweight.start();
             }else{
-                AgrawalaLightweight lightweight = new AgrawalaLightweight(i, myPort, lightweightPorts.get(i), portsWithoutMe);
+                AgrawalaMutex lightweight = new AgrawalaMutex(i, myPort, lightweightPorts.get(i), portsWithoutMe);
                 lightweight.start();
             }
         }

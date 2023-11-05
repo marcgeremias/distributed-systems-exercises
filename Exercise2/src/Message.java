@@ -7,6 +7,7 @@ public class Message {
     public static final String MESSAGE_REQUEST = "request";
     public static final String MESSAGE_PRINT = "print";
     public static final String MESSAGE_ACK = "ack";
+    public static final String MESSAGE_OKAY = "okay";
     public static final String MESSAGE_DONE = "done";
     public static final String MESSAGE_TOKEN = "token";
 
