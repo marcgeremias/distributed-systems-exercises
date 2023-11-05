@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class AgrawalaLightweight extends Thread{
-    private final LinkedList prendingQ;
+    private final LinkedList pendingQ;
     private AtomicInteger myTS = new AtomicInteger(0);
 
     private static final int NUM_LIGHTWEIGHTS = 3;
@@ -27,7 +27,7 @@ public class AgrawalaLightweight extends Thread{
         this.myPort = myPort;
         this.myId = myId;
         this.myTS.set(Integer.MAX_VALUE);
-        this.prendingQ = new LinkedList<Message>();
+        this.pendingQ = new LinkedList<Message>();
         this.wait = new AtomicBoolean(false);
 
 
@@ -74,7 +74,7 @@ public class AgrawalaLightweight extends Thread{
             requestCS();
             while(!wait.get());
             for (int i=0; i<NUM_PRINTS; i++){
-                System.out.println("I'm lightweight process " + myId + prendingQ);
+                System.out.println("I'm lightweight process " + myId + pendingQ);
                 Heavyweight.waitSecond();
             }
             this.start.set(false);
@@ -101,13 +101,13 @@ public class AgrawalaLightweight extends Thread{
     private void releaseCS() {
         myTS.set(Integer.MAX_VALUE);
         clock.tick();
-        while(!prendingQ.isEmpty()){
+        while(!pendingQ.isEmpty()){
             Message msg;
-            synchronized (prendingQ){
-                msg = (Message) prendingQ.removeFirst();
+            synchronized (pendingQ){
+                msg = (Message) pendingQ.removeFirst();
             }
 
-            //Message msg = (Message) prendingQ.removeFirst();
+            //Message msg = (Message) pendingQ.removeFirst();
             Message.sendMsg(new Message(myId, myPort, Message.MESSAGE_ACK, clock.getValue()), msg.getSrcPort());
         }
     }
@@ -121,8 +121,8 @@ public class AgrawalaLightweight extends Thread{
                 || ((timestamp == myTS.get()) && (msg.getSrcId() < myId))){
                 Message.sendMsg(new Message(myId, myPort, Message.MESSAGE_ACK, clock.getValue()), msg.getSrcPort());
             }else{
-                synchronized (prendingQ){
-                    prendingQ.add(msg);
+                synchronized (pendingQ){
+                    pendingQ.add(msg);
                 }
             }
         }else if(msg.getTag().equals(Message.MESSAGE_ACK)){
