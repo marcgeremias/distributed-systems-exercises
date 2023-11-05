@@ -61,7 +61,7 @@ public class Heavyweight extends Thread {
                 lightweight.start();
             }
         }
-        System.out.println("Summoned and started all lightweight processes from heavyweight " + id);
+        // System.out.println("Summoned and started all lightweight processes from heavyweight " + id); DEBUG print
     }
 
     private void startServer(){
@@ -86,7 +86,7 @@ public class Heavyweight extends Thread {
         summonLightweights();
         while (true) {
             while (!token) listenHeavyweight();
-            System.out.println("Heavyweight " + id + " received token");
+            // System.out.println("Heavyweight " + id + " received token"); DEBUG print
 
             sendActionToLightweights();
 

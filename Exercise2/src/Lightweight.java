@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class Lightweight extends Thread {
     protected static final int NUM_LIGHTWEIGHTS = 3;
-    protected static final int NUM_PRINTS = 2;
+    protected static final int NUM_PRINTS = 10;
     protected ArrayList<Integer> lightweightPorts;
     protected AtomicBoolean start;
     protected int heavyPort;
