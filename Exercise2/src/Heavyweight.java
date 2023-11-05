@@ -1,6 +1,5 @@
 import java.io.*;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.ArrayList;
 
 public class Heavyweight extends Thread {
@@ -53,7 +52,8 @@ public class Heavyweight extends Thread {
         for (int i = 0; i < NUM_LIGHTWEIGHTS; i++) {
             ArrayList<Integer> portsWithoutMe = new ArrayList<>(lightweightPorts);
             portsWithoutMe.remove(i);
-            Lightweight lightweight = new Lightweight(i, myPort, lightweightPorts.get(i), portsWithoutMe);
+            //LamportLightweight lightweight = new LamportLightweight(i, myPort, lightweightPorts.get(i), portsWithoutMe);
+            AgrawalaLightweight lightweight = new AgrawalaLightweight(i, myPort, lightweightPorts.get(i), portsWithoutMe);
             lightweight.start();
         }
         System.out.println("Summoned and started all lightweight processes from heavyweight " + id);

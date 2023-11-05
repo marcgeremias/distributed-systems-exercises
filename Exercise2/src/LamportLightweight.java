@@ -1,13 +1,10 @@
 import java.io.*;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.ArrayList;
-import java.util.PriorityQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicIntegerArray;
 
-public class Lightweight extends Thread{
+public class LamportLightweight extends Thread{
     private static final int NUM_LIGHTWEIGHTS = 3;
     private static final int NUM_PRINTS = 1;
     private ArrayList<Integer> lightweightPorts;
@@ -20,7 +17,7 @@ public class Lightweight extends Thread{
     private int myPort;
     private int myId;
 
-    public Lightweight(int myId, int heavyPort, int myPort, ArrayList<Integer> portsWithoutMe) {
+    public LamportLightweight(int myId, int heavyPort, int myPort, ArrayList<Integer> portsWithoutMe) {
         this.lightweightPorts = portsWithoutMe;
         this.heavyPort = heavyPort;
         this.myPort = myPort;
