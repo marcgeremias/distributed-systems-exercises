@@ -4,13 +4,7 @@
 #include <unistd.h>
 #include <pthread.h>
 
-// Mutex for thread synchronization
-pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-
-// Global variables for shared data between threads
-time_t start_time;
-char input_buffer[256];
-int buffer_index = 0;
+CLIENT *clnt;
 
 CLIENT* create_client(char *host) {
     CLIENT *clnt;
@@ -81,29 +75,28 @@ void print_time_elapsed(time_t start_time) {
     mvprintw(0, 0, "Time Elapsed: %d seconds", elapsed_seconds);
 }
 
-void print_chat(CLIENT *clnt) {
+
+void print_chat(WINDOW *top_window) {
     char *chat = getChat(clnt);
     char *line = strtok(chat, "\n");
-    int row = 0; // Start printing from the second row
     while (line != NULL) {
-        mvprintw(row++, 1, "%s", line);
+        wprintw(top_window, "%s\n", line);
         line = strtok(NULL, "\n");
     }
     free(chat);
 }
 
+void *bottomWindowThread(void *arg) {
+    WINDOW *top_window = (WINDOW *)arg;
 
-void* updateTime(void* arg) {
-    CLIENT *clnt = (CLIENT *)arg;
-
-    while (1) {
-        pthread_mutex_lock(&mutex);
-        //print_time_elapsed(start_time);
-        print_chat(clnt);
-        pthread_mutex_unlock(&mutex);
-        refresh();  // Refresh the screen
-        napms(1000);  // Sleep for 1 second
+    while (true) {
+        wclear(top_window); // Clear the top window
+        print_chat(top_window);
+        wrefresh(top_window);
+        refresh();
+        napms(1000);
     }
+
     return NULL;
 }
 
@@ -113,73 +106,61 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "%s <chatServerIP> <nickname>\n", argv[0]);
         return 1;
     }
-    CLIENT *clnt = create_client(argv[1]);
+    clnt = create_client(argv[1]);
+    char input_buffer[256];
+    int buffer_index = 0;
+
 
     // Initialize ncurses
     initscr();
-    cbreak();
-    keypad(stdscr, TRUE);
-    curs_set(1); // Make cursor visible
-
     // Split the console
     int height, width;
     getmaxyx(stdscr, height, width);
-
     WINDOW *top_window, *bottom_window;
     top_window = newwin(height - 1, width, 0, 0);
     bottom_window = newwin(1, width, height - 1, 0);
+    scrollok(top_window, TRUE);  // Enable scrolling for the top window
 
-    // Set up colors if supported
-    if (has_colors()) {
-        start_color();
-        init_pair(1, COLOR_BLACK, COLOR_WHITE);
-        wbkgd(top_window, COLOR_PAIR(1));
-    }
-
-    // Set up initial time
-    start_time = time(NULL);
-
-    // Create a thread for updating time
+    // Start the 
     pthread_t timeThread;
-    //pthread_create(&timeThread, NULL, updateTime, NULL);
-    pthread_create(&timeThread, NULL, updateTime, clnt);
-
-
-    // String buffer for user input
+    pthread_create(&timeThread, NULL, bottomWindowThread, top_window);
     memset(input_buffer, 0, sizeof(input_buffer));
 
-    // Main loop for user input
-    int ch;
+    char current_char;
     while (1) {
         // Get user input in bottom window
         wclear(bottom_window);
-        pthread_mutex_lock(&mutex);
         mvwprintw(bottom_window, 0, 0, "Input: %s", input_buffer);
-        pthread_mutex_unlock(&mutex);
         wrefresh(bottom_window);
 
-        ch = wgetch(bottom_window);  // Use wgetch for the bottom window
+        current_char = wgetch(bottom_window);  // Use wgetch for the bottom window
 
         // Handle user input
-        pthread_mutex_lock(&mutex);
-        if (ch == '\n') {
-            // If Enter is pressed, do something with the input (for example, print it)
-            mvwprintw(bottom_window, 0, 0, "You entered: %s", input_buffer);
+        if (current_char == '\n') {
+            writeChat(clnt, input_buffer);
+
             wclrtoeol(bottom_window);
             wrefresh(bottom_window);
-
+            // Scroll the bottom window to see the latest input
+            wscrl(bottom_window, 1);
             // Clear the input buffer
             memset(input_buffer, 0, sizeof(input_buffer));
             buffer_index = 0;
-        } else if (ch == 'q') {
-            break;  // Quit the program on 'q' key press
-        } else {
+        }else if (current_char == 127) { // handle Backspace key
+            if (buffer_index > 0) {
+                buffer_index--;
+                input_buffer[buffer_index] = '\0';
+            }
+        } 
+        // TODO Refactor code!! 
+        // TODO Handle arrow keys :D
+        // TODO Add the nickname to the msg
+        else {
             // Add the character to the input buffer
             if (buffer_index < sizeof(input_buffer) - 1) {
-                input_buffer[buffer_index++] = ch;
+                input_buffer[buffer_index++] = current_char;
             }
         }
-        pthread_mutex_unlock(&mutex);
     }
 
     // Disable echo and clean up
