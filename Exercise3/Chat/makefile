@@ -23,7 +23,7 @@ $(SERVER_EXEC): $(SERVER_OBJS)
 	$(CC) $(CFLAGS) -o $@ $^ -ltirpc
 
 $(CLIENT_EXEC): $(CLIENT_OBJS)
-	$(CC) $(CFLAGS) -o $@ $^ -ltirpc -lncurses
+	$(CC) $(CFLAGS) -o $@ $^ -ltirpc -lncurses -lpthread
 
 %.c: %.x
 	$(RPCGEN) $<
