@@ -22,7 +22,7 @@ void destroy_client(CLIENT *clnt) {
 
 
 
-void writeChat(CLIENT *clnt, char *msg) {
+void write(CLIENT *clnt, char *msg) {
     void *result_1;
 
     result_1 = send_msg_1(&msg, clnt);
@@ -51,18 +51,10 @@ int main(int argc, char *argv[]) {
 
     CLIENT *clnt = create_client(argv[1]);
 
-	writeChat(clnt, strcat(argv[2], ": Hello, server!"));
+	//write(clnt, strcat(argv[2], ": Hello, server!"));
 
-    //char *chat = getChat(clnt);
-    //printf("%s\n", chat);
-
-
-	initscr();			/* Start curses mode 		  */
-	printw("Hello World !!!");	/* Print Hello World		  */
-	refresh();			/* Print it on to the real screen */
-	getch();			/* Wait for user input */
-	endwin();			/* End curses mode		  */
-
+    char *chat = getChat(clnt);
+    printf("%s\n", chat);
 
 	destroy_client(clnt);
     return 0;
