@@ -33,7 +33,6 @@ char * readFile(){
 	FILE *file = fopen("chat.txt", "r");
 	if (file == NULL) return ""; // Return empty string if file does not exist
 	
-	// ref: https://stackoverflow.com/questions/3381080/reading-all-content-from-a-text-file-c
 	fseek (file, 0, SEEK_END);
 	long length = ftell (file);
 	fseek (file, 0, SEEK_SET);

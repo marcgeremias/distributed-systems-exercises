@@ -22,10 +22,6 @@ void destroy_client(CLIENT *clnt) {
     clnt_destroy(clnt);
 }
 
-
-
-
-
 void writeChat(CLIENT *clnt, char *msg) {
     void *result_1;
 
@@ -47,36 +43,7 @@ char* getChat(CLIENT *clnt) {
     return *result_2;
 }
 
-
-void *updateChat(void *arg) {
-    CLIENT *clnt = (CLIENT *)arg;
-
-    while (true){
-        char *chat = getChat(clnt);
-        char *line = strtok(chat, "\n");
-        int row = 0; // Start printing from the second row
-        while (line != NULL) {
-            mvprintw(row++, 1, "%s", line);
-            line = strtok(NULL, "\n");
-        }
-        refresh();
-        sleep(1);
-        free(chat);
-        clear();
-    }
-    
-}
-
-
-
-void print_time_elapsed(time_t start_time) {
-    time_t current_time = time(NULL);
-    int elapsed_seconds = difftime(current_time, start_time);
-    mvprintw(0, 0, "Time Elapsed: %d seconds", elapsed_seconds);
-}
-
-
-void print_chat(WINDOW *top_window) {
+void printChat(WINDOW *top_window) {
     char *chat = getChat(clnt);
     char *line = strtok(chat, "\n");
     while (line != NULL) {
@@ -91,7 +58,7 @@ void *bottomWindowThread(void *arg) {
 
     while (true) {
         wclear(top_window); // Clear the top window
-        print_chat(top_window);
+        printChat(top_window);
         wrefresh(top_window);
         refresh();
         napms(1000);
@@ -111,8 +78,8 @@ int main(int argc, char *argv[]) {
     int buffer_index = 0;
 
 
-    // Initialize ncurses
-    initscr();
+    initscr();  // Initialize ncurses
+    
     // Split the console
     int height, width;
     getmaxyx(stdscr, height, width);
@@ -121,9 +88,9 @@ int main(int argc, char *argv[]) {
     bottom_window = newwin(1, width, height - 1, 0);
     scrollok(top_window, TRUE);  // Enable scrolling for the top window
 
-    // Start the 
-    pthread_t timeThread;
-    pthread_create(&timeThread, NULL, bottomWindowThread, top_window);
+    // Start the time update thread
+    pthread_t thread;
+    pthread_create(&thread, NULL, bottomWindowThread, top_window);
     memset(input_buffer, 0, sizeof(input_buffer));
 
     char current_char;
@@ -164,9 +131,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Disable echo and clean up
-    pthread_cancel(timeThread);  // Cancel the time update thread
-    pthread_join(timeThread, NULL);  // Wait for the thread to finish
-    curs_set(0); // Make cursor invisible before exiting
+    //curs_set(0); // Make cursor invisible before exiting
     endwin();
     return 0;
 }
