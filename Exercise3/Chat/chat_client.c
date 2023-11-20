@@ -4,6 +4,8 @@
 #include <unistd.h>
 #include <pthread.h>
 
+#define MAX_MESSAGE_LENGTH 256
+
 CLIENT *clnt;
 
 CLIENT* create_client(char *host) {
@@ -22,16 +24,24 @@ void destroy_client(CLIENT *clnt) {
     clnt_destroy(clnt);
 }
 
-void writeChat(CLIENT *clnt, char *msg) {
+void write_chat(CLIENT *clnt, char *msg, char *user_name) {
     void *result_1;
+    char *final_msg;
 
-    result_1 = send_msg_1(&msg, clnt);
+    // Built the msg
+    final_msg = (char *)malloc(MAX_MESSAGE_LENGTH * sizeof(char));
+    if (final_msg == NULL) return;
+    snprintf(final_msg, MAX_MESSAGE_LENGTH, "%s: %s", user_name, msg);
+    
+    // Send the msg
+    result_1 = send_msg_1(&final_msg, clnt);
     if (result_1 == (void *)NULL) {
         clnt_perror(clnt, "call failed");
     }
+    free(final_msg);
 }
 
-char* getChat(CLIENT *clnt) {
+char* get_chat(CLIENT *clnt) {
     char **result_2;
 
     result_2 = get_msgs_1(NULL, clnt);
@@ -43,8 +53,8 @@ char* getChat(CLIENT *clnt) {
     return *result_2;
 }
 
-void printChat(WINDOW *top_window) {
-    char *chat = getChat(clnt);
+void print_chat(WINDOW *top_window) {
+    char *chat = get_chat(clnt);
     char *line = strtok(chat, "\n");
     while (line != NULL) {
         wprintw(top_window, "%s\n", line);
@@ -53,20 +63,59 @@ void printChat(WINDOW *top_window) {
     free(chat);
 }
 
-void *bottomWindowThread(void *arg) {
+void *top_window_thread(void *arg) {
     WINDOW *top_window = (WINDOW *)arg;
-
     while (true) {
-        wclear(top_window); // Clear the top window
-        printChat(top_window);
+        wclear(top_window);
+        print_chat(top_window);
         wrefresh(top_window);
         refresh();
         napms(1000);
     }
-
     return NULL;
 }
 
+void start_user_input_loop(WINDOW *bottom_window, char* user_name){
+    char input_buffer[MAX_MESSAGE_LENGTH];
+    int buffer_index = 0;
+    char current_char;
+
+    memset(input_buffer, 0, sizeof(input_buffer));
+
+    while (1) {
+        wclear(bottom_window);
+        mvwprintw(bottom_window, 0, 0, "%s --> %s",user_name, input_buffer);
+        wrefresh(bottom_window);
+
+        current_char = wgetch(bottom_window);
+        // Handle user input
+        if (current_char == '\n') {
+            write_chat(clnt, input_buffer, user_name);
+            wclrtoeol(bottom_window);
+            wrefresh(bottom_window);
+            memset(input_buffer, 0, sizeof(input_buffer));
+            buffer_index = 0;
+        } else if (current_char == 127) { // Delete KEY
+            if (buffer_index > 0) {
+                buffer_index--;
+                input_buffer[buffer_index] = '\0';
+            }
+        } else {
+            // Add the character to the input buffer
+            if (buffer_index < sizeof(input_buffer) - 1) {
+                input_buffer[buffer_index++] = current_char;
+            }
+        }
+    }
+}
+
+void set_ncurses_windows(WINDOW **top_window, WINDOW **bottom_window){
+    int height, width;
+    getmaxyx(stdscr, height, width);
+    *top_window = newwin(height - 1, width, 0, 0);
+    *bottom_window = newwin(1, width, height - 1, 0);
+    scrollok(*top_window, TRUE);
+}
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
@@ -74,64 +123,18 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     clnt = create_client(argv[1]);
-    char input_buffer[256];
-    int buffer_index = 0;
-
 
     initscr();  // Initialize ncurses
-    
-    // Split the console
-    int height, width;
-    getmaxyx(stdscr, height, width);
+
     WINDOW *top_window, *bottom_window;
-    top_window = newwin(height - 1, width, 0, 0);
-    bottom_window = newwin(1, width, height - 1, 0);
-    scrollok(top_window, TRUE);  // Enable scrolling for the top window
-
-    // Start the time update thread
+    set_ncurses_windows(&top_window, &bottom_window);
+    // Start the 1s chat refresh
     pthread_t thread;
-    pthread_create(&thread, NULL, bottomWindowThread, top_window);
-    memset(input_buffer, 0, sizeof(input_buffer));
+    pthread_create(&thread, NULL, top_window_thread, top_window);
+    // Start user input loop
+    start_user_input_loop(bottom_window, argv[2]);
 
-    char current_char;
-    while (1) {
-        // Get user input in bottom window
-        wclear(bottom_window);
-        mvwprintw(bottom_window, 0, 0, "Input: %s", input_buffer);
-        wrefresh(bottom_window);
+    endwin();   // Kill ncurses
 
-        current_char = wgetch(bottom_window);  // Use wgetch for the bottom window
-
-        // Handle user input
-        if (current_char == '\n') {
-            writeChat(clnt, input_buffer);
-
-            wclrtoeol(bottom_window);
-            wrefresh(bottom_window);
-            // Scroll the bottom window to see the latest input
-            wscrl(bottom_window, 1);
-            // Clear the input buffer
-            memset(input_buffer, 0, sizeof(input_buffer));
-            buffer_index = 0;
-        }else if (current_char == 127) { // handle Backspace key
-            if (buffer_index > 0) {
-                buffer_index--;
-                input_buffer[buffer_index] = '\0';
-            }
-        } 
-        // TODO Refactor code!! 
-        // TODO Handle arrow keys :D
-        // TODO Add the nickname to the msg
-        else {
-            // Add the character to the input buffer
-            if (buffer_index < sizeof(input_buffer) - 1) {
-                input_buffer[buffer_index++] = current_char;
-            }
-        }
-    }
-
-    // Disable echo and clean up
-    //curs_set(0); // Make cursor invisible before exiting
-    endwin();
     return 0;
 }
