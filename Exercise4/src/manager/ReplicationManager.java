@@ -5,17 +5,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ReplicationManager {
-    private HashMap<String,Integer> nodePorts;
     private ArrayList<Node> nodes;
+
     public ReplicationManager() {
-        this.nodePorts = new HashMap<>();
         this.nodes = new ArrayList<>();
     }
     public void init() {
         nodes = FileManager.getNodes();
+        nodes.forEach(System.out::println);
 
-        for (Node node: nodes){
-            System.out.println(node);
-        }
     }
 }
