@@ -1,9 +1,6 @@
 package business;
 
-import classes.Node;
-import classes.NodeCoreLayer;
-import classes.NodeFirstLayer;
-import classes.NodeSecondLayer;
+import classes.*;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -70,4 +67,23 @@ public class FileManager {
 
         return nodes;
     }
+
+    public static ArrayList<Transaction> getTransactions() {
+        ArrayList<Transaction> batch = new ArrayList<>();
+        try {
+            bufferedReader = new BufferedReader(new FileReader(PATH_TRANSACTONS));
+            while (bufferedReader.ready()) {
+                String line = bufferedReader.readLine();
+                String[] lineSplit = line.split("\\s*=\\s*");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return batch;
+    }
+
+
+
+
 }

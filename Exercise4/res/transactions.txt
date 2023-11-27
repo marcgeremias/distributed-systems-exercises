@@ -1,2 +1,2 @@
-b<f>, r(30), r(49), r(69), c (any layer transaction)
-b, r(12), w(49,53), r(69), c (core layer transaction)
+b<f>, r(30), r(49), r(69), c
+b, r(12), w(49,53), r(69), c
