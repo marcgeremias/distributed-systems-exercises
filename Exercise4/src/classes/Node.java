@@ -1,13 +1,16 @@
 package classes;
 
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public abstract class Node {
-    private HashMap<String,Integer> nodePorts;
-    private ArrayList<String> linkedNodes;
-    private String id;
-    private Integer port;
+public abstract class Node implements Runnable{
+    protected HashMap<String,Integer> nodePorts;
+    protected ArrayList<String> linkedNodes;
+    protected ServerSocket nodeServerSocket;
+    protected String id;
+    protected Integer port;
 
     public Node(HashMap<String,Integer> nodePorts, ArrayList<String> linkedNodes, String id, Integer port) {
         this.nodePorts = nodePorts;
@@ -19,12 +22,20 @@ public abstract class Node {
 
     @Override
     public String toString() {
-        return  "Node{" +
-                "nodePorts=" + nodePorts +
-                ", linkedNodes=" + linkedNodes +
-                ", id='" + id + '\'' +
-                ", port=" + port +
-                ", type=" + this.getClass().getSimpleName() +
-                '}';
+        return "Node {" +
+            "nodePorts=" + nodePorts +
+            ", linkedNodes=" + linkedNodes +
+            ", id='" + id + '\'' +
+            ", port=" + port +
+            ", type=" + this.getClass().getSimpleName() +
+            '}';
+    }
+
+    protected void startNodeServer() {
+        try {
+            nodeServerSocket = new ServerSocket(nodePorts.get(id));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

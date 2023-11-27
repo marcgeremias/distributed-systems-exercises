@@ -7,4 +7,9 @@ public class NodeFirstLayer extends Node {
     public NodeFirstLayer(HashMap<String, Integer> nodePorts, ArrayList<String> linkedNodes, String s, Integer integer) {
         super(nodePorts, linkedNodes, s, integer);
     }
+
+    @Override
+    public void run() {
+        while(true);
+    }
 }

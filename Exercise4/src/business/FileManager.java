@@ -1,4 +1,4 @@
-package manager;
+package business;
 
 import classes.Node;
 import classes.NodeCoreLayer;
@@ -6,16 +6,16 @@ import classes.NodeFirstLayer;
 import classes.NodeSecondLayer;
 
 import java.io.*;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
 public class FileManager {
-    private static final String PATH_NODES_PORTS = "Exercise4/src/res/nodes_ports.txt";
-    private static final String PATH_NODES_LINKS = "Exercise4/src/res/nodes_links.txt";
-    private static final String PATH_TRANSACTONS = "Exercise4/src/res/transactions.txt";
+    private static final String PATH_NODES_PORTS = "Exercise4/res/nodes_ports.txt";
+    private static final String PATH_NODES_LINKS = "Exercise4/res/nodes_links.txt";
+    private static final String PATH_TRANSACTONS = "Exercise4/res/transactions.txt";
     private static BufferedReader bufferedReader;
+
     private static HashMap<String, Integer> readNodePorts() {
         HashMap<String, Integer> nodePorts = new HashMap<>();
         try {
@@ -48,7 +48,6 @@ public class FileManager {
 
                 String[] lineSplit = line.split("\\s*=\\s*");
                 String[] linkedNodesSplit = lineSplit[1].split("\\s*,\\s*");
-
                 Collections.addAll(linkedNodes, linkedNodesSplit);
 
                 switch (currentLayer) {
@@ -62,7 +61,7 @@ public class FileManager {
                         nodes.add(new NodeSecondLayer(nodePorts, linkedNodes, lineSplit[0], nodePorts.get(lineSplit[0])));
                         break;
                     default:
-                        throw new RuntimeException("Invalid layer");
+                        throw new RuntimeException("Found invalid layer while reading the " + PATH_NODES_LINKS + " file");
                 }
             }
         } catch (IOException e) {

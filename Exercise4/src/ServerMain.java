@@ -1,8 +1,8 @@
-import manager.ReplicationManager;
+import business.NodesManager;
 
 public class ServerMain {
     public static void main(String[] args) {
-        ReplicationManager replicationManager = new ReplicationManager();
-        replicationManager.init();
+        NodesManager nodesManager = new NodesManager();
+        nodesManager.init();
     }
 }
