@@ -7,7 +7,9 @@ import java.util.ArrayList;
 public class ClientManager {
     public void init(){
         ArrayList<Transaction> transactions = FileManager.getTransactions();
-        System.out.println(transactions);
+        for (Transaction transaction : transactions) {
+            System.out.println(transaction.toString());
+        }
     }
 }
 

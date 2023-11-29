@@ -4,6 +4,7 @@ import classes.*;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -69,18 +70,29 @@ public class FileManager {
     }
 
     public static ArrayList<Transaction> getTransactions() {
-        ArrayList<Transaction> batch = new ArrayList<>();
+        ArrayList<Transaction> transactionsBatch = new ArrayList<>();
         try {
             bufferedReader = new BufferedReader(new FileReader(PATH_TRANSACTONS));
             while (bufferedReader.ready()) {
+                Transaction currentTransaction;
                 String line = bufferedReader.readLine();
-                String[] lineSplit = line.split("\\s*=\\s*");
+                String[] lineSplit = line.split("\\s*,\\s*");
+                if(lineSplit[0].equals("b")){ // Not read only (Must be executed in the core layer)
+                    currentTransaction = new Transaction(false, Transaction.CORE_LAYER);
+                }else{ // Read only (Can be executed in any layer)
+                    currentTransaction = new Transaction(true, Integer.parseInt(lineSplit[0].substring(2,3)));
+                }
+                // Remove the first and last element of the array (b<f>, and c)
+                lineSplit = Arrays.copyOfRange(lineSplit, 1, lineSplit.length-1);
+                for (String operationString : lineSplit) {
+                    currentTransaction.addOperation(new Operation(operationString));
+                }
+                transactionsBatch.add(currentTransaction);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-        return batch;
+        return transactionsBatch;
     }
 
 

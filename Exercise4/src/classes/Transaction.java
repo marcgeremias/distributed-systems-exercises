@@ -3,14 +3,16 @@ package classes;
 import java.util.ArrayList;
 
 public class Transaction {
+    public static final int CORE_LAYER = 0;
+    public static final int FIRST_LAYER = 1;
+    public static final int SECOND_LAYER = 2;
     private ArrayList<Operation> operations;
+    private boolean readOnly = false;
     private int layer;
-    /* If the layer is -1 the transaction is Not read-only and will
-    be executed inside the core layer, otherwise it will be executed
-    inside the specified layer */
 
-    public Transaction(int layer) {
+    public Transaction(boolean readOnly,int layer) {
         this.operations = new ArrayList<>();
+        this.readOnly = readOnly;
         this.layer = layer;
     }
 
@@ -21,13 +23,17 @@ public class Transaction {
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
-        // Use ternary operator to check if the transaction is read-only
-        stringBuilder.append(layer == -1 ? "b<f>" : "b<" + layer + ">, ");
-
-
+        stringBuilder.append(readOnly ? "b<" + layer + ">, " :  "b, ");
         for (Operation operation : operations) {
-            // TODO
+            // If is the last operation, remove the comma
+            if(operations.indexOf(operation) == operations.size()-1){
+                stringBuilder.append(operation.toString());
+                break;
+            }
+            stringBuilder.append(operation.toString()).append(", ");
         }
-        return null;
+        stringBuilder.append(", c");
+
+        return stringBuilder.toString();
     }
 }
