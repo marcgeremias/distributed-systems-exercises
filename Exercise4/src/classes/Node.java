@@ -31,6 +31,26 @@ public abstract class Node implements Runnable{
             '}';
     }
 
+    public String showNodeData() {
+        StringBuilder result = new StringBuilder();
+
+        result.append("id: ").append(id).append("\n");
+        result.append("port: ").append(port).append("\n");
+
+        result.append("nodePorts:\n");
+        for (String key : nodePorts.keySet()) {
+            result.append("\t").append(key).append(": ").append(nodePorts.get(key)).append("\n");
+        }
+
+        result.append("linkedNodes:\n");
+        for (String linkedNode : linkedNodes) {
+            result.append("\t").append(linkedNode).append("\n");
+        }
+
+        return result.toString();
+    }
+
+
     protected void startNodeServer() {
         try {
             nodeServerSocket = new ServerSocket(nodePorts.get(id));
