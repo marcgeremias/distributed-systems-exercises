@@ -1,6 +1,9 @@
 import business.ClientManager;
 
+import java.net.ServerSocket;
+
 public class ClientMain {
+
     public static void main(String[] args) {
         /* TODO:
             - 1. Llegir fitxer transactions.txt

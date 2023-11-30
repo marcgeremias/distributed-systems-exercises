@@ -34,6 +34,7 @@ public class Message {
         }
     }
 
+
     @Override
     public String toString() {
         return payload;
