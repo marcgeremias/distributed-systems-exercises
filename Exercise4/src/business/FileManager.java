@@ -12,9 +12,10 @@ public class FileManager {
     private static final String PATH_NODES_PORTS = "Exercise4/res/nodes_ports.txt";
     private static final String PATH_NODES_LINKS = "Exercise4/res/nodes_links.txt";
     private static final String PATH_TRANSACTONS = "Exercise4/res/transactions.txt";
+    private static final Integer MAX_NUMBER_OF_LAYERS = 3;
     private static BufferedReader bufferedReader;
 
-    private static HashMap<String, Integer> readNodePorts() {
+    public static HashMap<String, Integer> readNodePorts() {
         HashMap<String, Integer> nodePorts = new HashMap<>();
         try {
             bufferedReader = new BufferedReader(new FileReader(PATH_NODES_PORTS));
@@ -95,7 +96,31 @@ public class FileManager {
         return transactionsBatch;
     }
 
+    public static ArrayList<String>[] getLayerNodes() {
+        ArrayList<String>[] arrayLayerNodes = new ArrayList[MAX_NUMBER_OF_LAYERS];
 
+        for (int i = 0; i < MAX_NUMBER_OF_LAYERS; i++) {
+            arrayLayerNodes[i] = new ArrayList<>();
+        }
+
+        try {
+            bufferedReader = new BufferedReader(new FileReader(PATH_NODES_LINKS));
+            int currentLayer = 0;
+            while (bufferedReader.ready()) {
+                String line = bufferedReader.readLine();
+                if (!line.contains("=")) {
+                    currentLayer++;
+                    continue;
+                }
+                String[] lineSplit = line.split("\\s*=\\s*");
+                arrayLayerNodes[currentLayer].add(lineSplit[0]);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return arrayLayerNodes;
+    }
 
 
 }

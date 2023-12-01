@@ -12,7 +12,5 @@ public class NodesManager {
             Thread thread = new Thread(node);
             thread.start();
         }
-        //nodes.forEach(System.out::println);
-
     }
 }
