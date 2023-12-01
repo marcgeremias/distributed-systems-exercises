@@ -6,6 +6,7 @@ import java.net.Socket;
 
 public class Message {
     private final String payload;
+
     public Message(String payload) {
         this.payload = payload;
     }
@@ -33,7 +34,6 @@ public class Message {
             throw new RuntimeException(e);
         }
     }
-
 
     @Override
     public String toString() {

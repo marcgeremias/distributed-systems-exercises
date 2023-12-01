@@ -1,14 +1,11 @@
 package classes;
 
-import java.io.IOException;
-import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public abstract class Node implements Runnable{
     protected HashMap<String,Integer> nodePorts;
     protected ArrayList<String> linkedNodes;
-    protected ServerSocket nodeServerSocket;
     protected String id;
     protected Integer port;
 
@@ -50,12 +47,4 @@ public abstract class Node implements Runnable{
         return result.toString();
     }
 
-
-    protected void startNodeServer() {
-        try {
-            nodeServerSocket = new ServerSocket(nodePorts.get(id));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }
