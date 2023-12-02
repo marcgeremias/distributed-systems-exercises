@@ -1,6 +1,8 @@
 package classes;
 
-public class Operation {
+import java.io.Serializable;
+
+public class Operation implements Serializable {
     public static final String OPERATION_READ = "r";
     public static final String OPERATION_WRITE = "w";
     private String type; // read-only or not-read-only

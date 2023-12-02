@@ -11,8 +11,8 @@ import java.util.HashMap;
 public class FileManager {
     private static final String PATH_NODES_PORTS = "Exercise4/res/nodes_ports.txt";
     private static final String PATH_NODES_LINKS = "Exercise4/res/nodes_links.txt";
-    private static final String PATH_TRANSACTONS = "Exercise4/res/transactions.txt";
-    private static final Integer MAX_NUMBER_OF_LAYERS = 3;
+    private static final String PATH_TRANSACTIONS = "Exercise4/res/transactions.txt";
+    private static final String PATH_CLIENT_PORT = "Exercise4/res/client_port.txt";
     private static BufferedReader bufferedReader;
 
     public static HashMap<String, Integer> readNodePorts() {
@@ -30,9 +30,10 @@ public class FileManager {
         return nodePorts;
     }
 
-    public static ArrayList<Node> getNodes() {
+    public static ArrayList<Node> readNodes() {
         HashMap<String, Integer> nodePorts = readNodePorts();
         ArrayList<Node> nodes = new ArrayList<>();
+        int clientPort = readClientPort();
 
         try {
             bufferedReader = new BufferedReader(new FileReader(PATH_NODES_LINKS));
@@ -51,13 +52,13 @@ public class FileManager {
 
                 switch (currentLayer) {
                     case 0:
-                        nodes.add(new NodeCoreLayer(nodePorts, linkedNodes, lineSplit[0], nodePorts.get(lineSplit[0])));
+                        nodes.add(new NodeCoreLayer(nodePorts, linkedNodes, lineSplit[0], nodePorts.get(lineSplit[0]), clientPort));
                         break;
                     case 1:
-                        nodes.add(new NodeFirstLayer(nodePorts, linkedNodes, lineSplit[0], nodePorts.get(lineSplit[0])));
+                        nodes.add(new NodeFirstLayer(nodePorts, linkedNodes, lineSplit[0], nodePorts.get(lineSplit[0]), clientPort));
                         break;
                     case 2:
-                        nodes.add(new NodeSecondLayer(nodePorts, linkedNodes, lineSplit[0], nodePorts.get(lineSplit[0])));
+                        nodes.add(new NodeSecondLayer(nodePorts, linkedNodes, lineSplit[0], nodePorts.get(lineSplit[0]), clientPort));
                         break;
                     default:
                         throw new RuntimeException("Found invalid layer while reading the " + PATH_NODES_LINKS + " file");
@@ -70,10 +71,10 @@ public class FileManager {
         return nodes;
     }
 
-    public static ArrayList<Transaction> getTransactions() {
+    public static ArrayList<Transaction> readTransactions() {
         ArrayList<Transaction> transactionsBatch = new ArrayList<>();
         try {
-            bufferedReader = new BufferedReader(new FileReader(PATH_TRANSACTONS));
+            bufferedReader = new BufferedReader(new FileReader(PATH_TRANSACTIONS));
             while (bufferedReader.ready()) {
                 Transaction currentTransaction;
                 String line = bufferedReader.readLine();
@@ -96,12 +97,9 @@ public class FileManager {
         return transactionsBatch;
     }
 
-    public static ArrayList<String>[] getLayerNodes() {
-        ArrayList<String>[] arrayLayerNodes = new ArrayList[MAX_NUMBER_OF_LAYERS];
-
-        for (int i = 0; i < MAX_NUMBER_OF_LAYERS; i++) {
-            arrayLayerNodes[i] = new ArrayList<>();
-        }
+    public static ArrayList<String>[] readLayerNodes() {
+        ArrayList<String>[] arrayLayerNodes = new ArrayList[NodesManager.MAX_NUMBER_OF_LAYERS];
+        for (int i = 0; i < NodesManager.MAX_NUMBER_OF_LAYERS; i++) arrayLayerNodes[i] = new ArrayList<>();
 
         try {
             bufferedReader = new BufferedReader(new FileReader(PATH_NODES_LINKS));
@@ -122,5 +120,17 @@ public class FileManager {
         return arrayLayerNodes;
     }
 
-
+    public static int readClientPort() {
+        try {
+            bufferedReader = new BufferedReader(new FileReader(PATH_CLIENT_PORT));
+            if(bufferedReader.ready()) {
+                String line = bufferedReader.readLine();
+                String[] lineSplit = line.split("\\s*=\\s*");
+                return Integer.parseInt(lineSplit[1]);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return -1;
+    }
 }

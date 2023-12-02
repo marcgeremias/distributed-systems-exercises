@@ -1,8 +1,9 @@
 package classes;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Transaction {
+public class Transaction implements Serializable {
     public static final int CORE_LAYER = 0;
     public static final int FIRST_LAYER = 1;
     public static final int SECOND_LAYER = 2;
@@ -18,6 +19,18 @@ public class Transaction {
 
     public void addOperation(Operation operation){
         operations.add(operation);
+    }
+
+    public ArrayList<Operation> getOperations() {
+        return operations;
+    }
+
+    public boolean isReadOnly() {
+        return readOnly;
+    }
+
+    public int getLayer() {
+        return layer;
     }
 
     @Override

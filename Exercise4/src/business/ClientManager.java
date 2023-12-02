@@ -1,27 +1,60 @@
 package business;
 
+import classes.Message;
 import classes.Transaction;
+
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 public class ClientManager {
     private ArrayList<Transaction> transactions;
     private HashMap<String,Integer> nodePorts;
     private ArrayList<String>[] linkedNodes;
+    private ServerSocket clientServerSocket;
+    private final int clientPort;
+
+    public ClientManager(){
+        transactions = FileManager.readTransactions();
+        linkedNodes = FileManager.readLayerNodes();
+        nodePorts = FileManager.readNodePorts();
+        clientPort = FileManager.readClientPort();
+
+        startClientServer();
+    }
+
+    private void startClientServer() {
+        try {
+            clientServerSocket = new ServerSocket(clientPort);
+            System.out.println("Client started server on port " + clientPort);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public void init(){
-        transactions = FileManager.getTransactions();
-        linkedNodes = FileManager.getLayerNodes();
-        nodePorts = FileManager.readNodePorts();
-
         for (Transaction transaction : transactions) {
-            System.out.println(transaction.toString());
             processTransaction(transaction);
         }
     }
 
     private void processTransaction(Transaction transaction) {
-        // TODO Send transaction through a Message
+        Message msg = new Message(transaction);
+        Random random = new Random();
+        int randomNode = random.nextInt(linkedNodes[transaction.getLayer()].size());
+        Message.sendMessage(msg,nodePorts.get(linkedNodes[transaction.getLayer()].get(randomNode)));
+        System.out.println("Sending to layer " + transaction.getLayer() + " node " + linkedNodes[transaction.getLayer()].get(randomNode));
+
+        if(!transaction.isReadOnly()){
+            Message nodeResponse = Message.getMessage(clientServerSocket);
+            if(nodeResponse.getMessageType() == Message.MESSAGE_TYPE_OK){
+                System.out.println("Transaction " + transaction + " OK");
+            }else if(nodeResponse.getMessageType() == Message.MESSAGE_TYPE_KO){
+                throw new RuntimeException("Transaction " + transaction + " ERROR");
+            }
+        }
     }
 }
 
