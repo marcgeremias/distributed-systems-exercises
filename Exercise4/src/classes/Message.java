@@ -67,6 +67,18 @@ public class Message implements Serializable {
         return messageType;
     }
 
+    public void executeOperation(Operation operation){
+        if(operation.getType().equals(Operation.OPERATION_READ)){
+            int newValue = operation.getB();
+            this.replicatedHashmap.put(operation.getA(), newValue);
+        } else if(operation.getType().equals(Operation.OPERATION_WRITE)){
+            int lineToRead = operation.getA();
+            System.out.println("Line " + lineToRead + " - Read: " + this.replicatedHashmap.get(lineToRead));
+        }else{
+            throw new RuntimeException("Invalid operation type");
+        }
+    }
+
     @Override
     public String toString() {
         return "Message{" +

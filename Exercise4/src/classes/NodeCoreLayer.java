@@ -11,6 +11,13 @@ public class NodeCoreLayer extends Node {
         this.nWrite = 0;
     }
 
+    private void processMsgOperations(Message msg) {
+        Transaction transaction = msg.getPayloadTransaction();
+        for (Operation operation : transaction.getOperations()) {
+            msg.executeOperation(operation);
+        }
+    }
+
     /*Core:
           - Update everywhere = Permet a l'usuari efectuar operacions de modificació a qualsevol dels nodes
           - Active = Es passa la recepta (en el nostre cas en concret les transaccions a fer a la resta de nodes)
@@ -22,13 +29,11 @@ public class NodeCoreLayer extends Node {
         System.out.println("Node " + id + " from layer " + this.getClass().getSimpleName() + " received transaction " + msg.getPayloadTransaction());
 
         // 1. Eager replication, send received "recipe" to all nodes before executing it
-        Message message = new Message(msg.getPayloadTransaction());
+
+        // 2. Update everywhere, broadcast the message to all nodes
         layerBroadcast(msg);
-        //TODO: executeOperations();
 
-
-
-
+        processMsgOperations(msg);
 
     }
 }
