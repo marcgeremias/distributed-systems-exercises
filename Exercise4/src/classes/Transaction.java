@@ -2,6 +2,7 @@ package classes;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Transaction implements Serializable {
     public static final int CORE_LAYER = 0;

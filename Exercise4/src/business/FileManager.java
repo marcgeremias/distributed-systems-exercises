@@ -32,6 +32,8 @@ public class FileManager {
 
     public static ArrayList<Node> readNodes() {
         HashMap<String, Integer> nodePorts = readNodePorts();
+        ArrayList<String>[] nodesPerLayer = FileManager.readLayerNodes();
+
         ArrayList<Node> nodes = new ArrayList<>();
         int clientPort = readClientPort();
 
@@ -52,13 +54,13 @@ public class FileManager {
 
                 switch (currentLayer) {
                     case 0:
-                        nodes.add(new NodeCoreLayer(nodePorts, linkedNodes, lineSplit[0], nodePorts.get(lineSplit[0]), clientPort));
+                        nodes.add(new NodeCoreLayer(nodePorts, linkedNodes, lineSplit[0], nodePorts.get(lineSplit[0]), clientPort, nodesPerLayer));
                         break;
                     case 1:
-                        nodes.add(new NodeFirstLayer(nodePorts, linkedNodes, lineSplit[0], nodePorts.get(lineSplit[0]), clientPort));
+                        nodes.add(new NodeFirstLayer(nodePorts, linkedNodes, lineSplit[0], nodePorts.get(lineSplit[0]), clientPort, nodesPerLayer));
                         break;
                     case 2:
-                        nodes.add(new NodeSecondLayer(nodePorts, linkedNodes, lineSplit[0], nodePorts.get(lineSplit[0]), clientPort));
+                        nodes.add(new NodeSecondLayer(nodePorts, linkedNodes, lineSplit[0], nodePorts.get(lineSplit[0]), clientPort, nodesPerLayer));
                         break;
                     default:
                         throw new RuntimeException("Found invalid layer while reading the " + PATH_NODES_LINKS + " file");

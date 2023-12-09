@@ -6,18 +6,19 @@ import java.net.Socket;
 import java.util.HashMap;
 
 public class Message implements Serializable {
-    public static final int MESSAGE_TYPE_TRANSACTION = 0;
-    public static final int MESSAGE_TYPE_REPLICATED_HASHMAP = 1;
-    public static final int MESSAGE_TYPE_OK = 2;
-    public static final int MESSAGE_TYPE_KO = -1;
+    public static final int MESSAGE_TYPE_TRANSACTION = 0;           // From Client to any Node passing the Transaction
+    public static final int MESSAGE_TYPE_REPLICATED_HASHMAP = 1;    // From Node to PASSIVE node
+    public static final int MESSAGE_TYPE_TRANSACTION_RECIPE = 2;    // From Node to ACTIVE node
+    public static final int MESSAGE_TYPE_OK = 3;                    // From EAGER Node to Client OK
+    public static final int MESSAGE_TYPE_KO = -1;                   // From EAGER Node to Client KO
     private HashMap<Integer,Integer> replicatedHashmap;
     private Transaction payloadTransaction;
     private int messageType;
 
-    public Message(Transaction payloadTransaction) {
+    public Message(Transaction payloadTransaction, int messageType) {
         this.payloadTransaction = payloadTransaction;
         this.replicatedHashmap = null;
-        this.messageType = MESSAGE_TYPE_TRANSACTION;
+        this.messageType = messageType;
     }
 
     public Message(HashMap<Integer, Integer> replicatedHashmap) {
@@ -26,10 +27,10 @@ public class Message implements Serializable {
         this.messageType = MESSAGE_TYPE_REPLICATED_HASHMAP;
     }
 
-    public Message() {
+    public Message(int messageType) {
         this.payloadTransaction = null;
         this.replicatedHashmap = null;
-        this.messageType = MESSAGE_TYPE_OK;
+        this.messageType = messageType;
     }
 
     public static void sendMessage(Message message, Integer port) {
@@ -67,17 +68,17 @@ public class Message implements Serializable {
         return messageType;
     }
 
-    public void executeOperation(Operation operation){
+    /*public void executeOperation(Operation operation){
         if(operation.getType().equals(Operation.OPERATION_READ)){
-            int newValue = operation.getB();
-            this.replicatedHashmap.put(operation.getA(), newValue);
+            int newValue = operation.getValue();
+            this.replicatedHashmap.put(operation.getKey(), newValue);
         } else if(operation.getType().equals(Operation.OPERATION_WRITE)){
-            int lineToRead = operation.getA();
+            int lineToRead = operation.getKey();
             System.out.println("Line " + lineToRead + " - Read: " + this.replicatedHashmap.get(lineToRead));
         }else{
             throw new RuntimeException("Invalid operation type");
         }
-    }
+    }*/
 
     @Override
     public String toString() {

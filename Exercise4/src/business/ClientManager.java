@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
+import static java.lang.Thread.sleep;
+
 public class ClientManager {
     private ArrayList<Transaction> transactions;
     private HashMap<String,Integer> nodePorts;
@@ -41,7 +43,7 @@ public class ClientManager {
     }
 
     private void processTransaction(Transaction transaction) {
-        Message msg = new Message(transaction);
+        Message msg = new Message(transaction, Message.MESSAGE_TYPE_TRANSACTION);
         Random random = new Random();
         int randomNode = random.nextInt(linkedNodes[transaction.getLayer()].size());
         Message.sendMessage(msg,nodePorts.get(linkedNodes[transaction.getLayer()].get(randomNode)));
@@ -54,7 +56,16 @@ public class ClientManager {
             }else if(nodeResponse.getMessageType() == Message.MESSAGE_TYPE_KO){
                 throw new RuntimeException("Transaction " + transaction + " ERROR");
             }
+        }else{
+            // TODO: Read only transaction in any layer
         }
+
+        try {
+            sleep(3000); // DEBUGGING
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }
 

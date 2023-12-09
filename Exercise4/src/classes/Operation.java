@@ -34,11 +34,11 @@ public class Operation implements Serializable {
         return type;
     }
 
-    public int getA() {
+    public int getKey() {
         return a;
     }
 
-    public int getB() {
+    public int getValue() {
         return b;
     }
 
