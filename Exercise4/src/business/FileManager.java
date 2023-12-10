@@ -135,4 +135,19 @@ public class FileManager {
         }
         return -1;
     }
+
+    public static void appendNewTransaction (Transaction transaction) {
+        //Conversion of the transaction to a string format: b<layer>, <operation1>, <operation2>, ..., c
+        String data = transaction.toString();
+        try {
+            FileWriter fileWriter = new FileWriter(PATH_TRANSACTIONS, true);
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+            bufferedWriter.write(data);
+            bufferedWriter.newLine();
+            bufferedWriter.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
