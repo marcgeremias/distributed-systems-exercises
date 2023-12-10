@@ -104,6 +104,7 @@ public abstract class Node implements Runnable{
     }
 
     protected void executeTransaction(Transaction transaction){
+
         for(Operation operation : transaction.getOperations()){
             if(operation.getType().equals(Operation.OPERATION_WRITE)){
                 //Apply the operation to the replicated hashmap
