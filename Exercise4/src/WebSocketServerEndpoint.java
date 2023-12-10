@@ -7,9 +7,11 @@ public class WebSocketServerEndpoint {
     public void onOpen (Session session) {
         System.out.println("[SERVER]: Handshake successful!!!!! - Connected!!!!! - Session ID: " + session.getId());
         // Send message to client
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10; i++) {
             try {
                 session.getBasicRemote().sendText("Hello from server - " + i);
+                //TODO: Monitore the initial status of each node - of the network
+
                 Thread.sleep(1000);
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
