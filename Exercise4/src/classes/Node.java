@@ -103,21 +103,20 @@ public abstract class Node implements Runnable{
         }
     }
 
+    /*if(operation.getType().equals(Operation.OPERATION_WRITE)){
+        replicatedHashmap.put(operation.getKey(),operation.getValue());
+        // TODO: Log write operation
+    }else if(operation.getType().equals(Operation.OPERATION_READ)){
+        // TODO: Log read operation
+    }*/
     protected void executeTransaction(Transaction transaction){
         for(Operation operation : transaction.getOperations()){
             if(operation.getType().equals(Operation.OPERATION_WRITE)){
-                //Apply the operation to the replicated hashmap
                 replicatedHashmap.put(operation.getKey(),operation.getValue());
+                // TODO: Log write operation
             }else if(operation.getType().equals(Operation.OPERATION_READ)){
-                //Read the value from the replicated hashmap
-                ArrayList<Operation> operations = transaction.getOperations();
-                for (Operation op: operations) {
-                    int lineToRead = op.getKey();
-                    System.out.println("Line " + lineToRead + " - Read: " + this.replicatedHashmap.get(lineToRead));
-                }
+                // TODO: Log read operation
             }
-            //Write the transaction to the file - log register
-            FileManager.appendNewTransaction(transaction);
         }
     }
 

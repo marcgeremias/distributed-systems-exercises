@@ -9,10 +9,10 @@ import java.util.Collections;
 import java.util.HashMap;
 
 public class FileManager {
-    private static final String PATH_NODES_PORTS = "Exercise4/res/nodes_ports.txt";
-    private static final String PATH_NODES_LINKS = "Exercise4/res/nodes_links.txt";
+    private static final String PATH_NODES_PORTS = "Exercise4/res/config_files/nodes_ports.txt";
+    private static final String PATH_NODES_LINKS = "Exercise4/res/config_files/nodes_links.txt";
+    private static final String PATH_CLIENT_PORT = "Exercise4/res/config_files/client_port.txt";
     private static final String PATH_TRANSACTIONS = "Exercise4/res/transactions.txt";
-    private static final String PATH_CLIENT_PORT = "Exercise4/res/client_port.txt";
     private static BufferedReader bufferedReader;
 
     public static HashMap<String, Integer> readNodePorts() {
