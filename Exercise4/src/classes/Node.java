@@ -1,7 +1,10 @@
 package classes;
 
 import business.FileManager;
+import org.glassfish.tyrus.server.Server;
 
+import javax.websocket.DeploymentException;
+import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
@@ -29,6 +32,7 @@ public abstract class Node implements Runnable{
 
         startNodeServer();
     }
+
 
     @Override
     public void run() {
@@ -103,21 +107,15 @@ public abstract class Node implements Runnable{
         }
     }
 
-    /*if(operation.getType().equals(Operation.OPERATION_WRITE)){
-        replicatedHashmap.put(operation.getKey(),operation.getValue());
-        // TODO: Log write operation
-    }else if(operation.getType().equals(Operation.OPERATION_READ)){
-        // TODO: Log read operation
-    }*/
     protected void executeTransaction(Transaction transaction){
         for(Operation operation : transaction.getOperations()){
             if(operation.getType().equals(Operation.OPERATION_WRITE)){
                 replicatedHashmap.put(operation.getKey(),operation.getValue());
-                // TODO: Log write operation
             }else if(operation.getType().equals(Operation.OPERATION_READ)){
-                // TODO: Log read operation
+                // TODO: Make read log
             }
         }
+        FileManager.writeNewLog(this.id, replicatedHashmap);
     }
 
     protected abstract void processMessage(Message msg);

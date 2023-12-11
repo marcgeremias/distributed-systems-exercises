@@ -15,19 +15,15 @@ public class Operation implements Serializable {
         this.b = b;
     }
 
-    /**
-     * Constructor used to create w/r operations from
-     * transaction format (r(a) or w(a,b))
-     */
-    public Operation(String rawOperation) {
-        String[] operationSplit = rawOperation.split("[()]");
-        this.type = operationSplit[0];
-        String[] operationParams = operationSplit[1].split(",");
-        this.a = Integer.parseInt(operationParams[0]);
+    public Operation(int a) {
+        this.type = OPERATION_READ;
+        this.a = a;
+    }
 
-        if(operationParams.length > 1){
-            this.b = Integer.parseInt(operationParams[1]);
-        }
+    public Operation(int a, int b) {
+        this.type = OPERATION_WRITE;
+        this.a = a;
+        this.b = b;
     }
 
     public String getType() {
