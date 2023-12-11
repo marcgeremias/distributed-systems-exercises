@@ -72,7 +72,7 @@ public class FileManager {
     }
 
     public static ArrayList<Transaction> readTransactions() {
-            // TODO: CLEAN THIS SPAGHETTI CODE
+        // TODO: CLEAN THIS SPAGHETTI CODE
         ArrayList<Transaction> transactionsBatch = new ArrayList<>();
         try {
             bufferedReader = new BufferedReader(new FileReader(PATH_TRANSACTIONS));
@@ -194,12 +194,6 @@ public class FileManager {
                             logs.append(bufferedReader.readLine()).append("\n");
                         }
                     }
-
-                    /*bufferedReader = new BufferedReader(new FileReader(path));
-                    logs.append("Node ").append(node).append(":\n");
-                    while (bufferedReader.ready()) {
-                        logs.append(bufferedReader.readLine()).append("\n");
-                    }*/
                 }
             }
             return logs.toString();

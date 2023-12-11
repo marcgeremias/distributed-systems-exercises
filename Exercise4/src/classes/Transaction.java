@@ -50,4 +50,15 @@ public class Transaction implements Serializable {
 
         return stringBuilder.toString();
     }
+
+    public boolean containsNotReadOnlyOperation(){
+        for (Operation operation : operations) {
+            if(operation.getType().equals(Operation.OPERATION_WRITE)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
 }
