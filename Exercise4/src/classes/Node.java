@@ -127,6 +127,7 @@ public abstract class Node implements Runnable{
         }
     }
 
+    /*
     void sendOKToSrc(Message message) {
         ArrayList<Integer> destPorts = new ArrayList<>();
         int srcPort = message.getSrcPort();
@@ -142,11 +143,12 @@ public abstract class Node implements Runnable{
             sendOK(message, srcPort, destPort);
         }
     }
+     */
 
-    void sendOK(Message message, int srcPort, int destPort) {
+    void sendOKMsg(Message message, int srcPort, int destPort) {
         // If I receive a message, send OK to the node that sent the message
         Message msgOK = new Message(message.getPayloadTransaction(), Message.MESSAGE_TYPE_OK, destPort);
-        System.out.println("Port:" + destPort + ", send a OK message to port: " + srcPort);
+        System.out.println("Port: " + destPort + ", send a OK message to port: " + srcPort);
         Message.sendMessage(msgOK, srcPort);
     }
 
