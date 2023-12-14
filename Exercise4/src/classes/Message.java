@@ -14,6 +14,7 @@ public class Message implements Serializable {
     private HashMap<Integer,Integer> replicatedHashmap;
     private Transaction payloadTransaction;
     private int messageType;
+    private int sourcePort;
 
     public Message(Transaction payloadTransaction, int messageType) {
         this.payloadTransaction = payloadTransaction;
@@ -31,6 +32,14 @@ public class Message implements Serializable {
         this.payloadTransaction = null;
         this.replicatedHashmap = null;
         this.messageType = messageType;
+    }
+
+    // Managing of OK messages from EAGER REPLICATION nodes from core layer
+    public Message(Transaction payloadTransaction, int messageType, int sourcePort) {
+        this.payloadTransaction = payloadTransaction;
+        this.replicatedHashmap = null;
+        this.messageType = messageType;
+        this.sourcePort = sourcePort;
     }
 
     public static void sendMessage(Message message, Integer port) {
@@ -68,17 +77,9 @@ public class Message implements Serializable {
         return messageType;
     }
 
-    /*public void executeOperation(Operation operation){
-        if(operation.getType().equals(Operation.OPERATION_READ)){
-            int newValue = operation.getValue();
-            this.replicatedHashmap.put(operation.getKey(), newValue);
-        } else if(operation.getType().equals(Operation.OPERATION_WRITE)){
-            int lineToRead = operation.getKey();
-            System.out.println("Line " + lineToRead + " - Read: " + this.replicatedHashmap.get(lineToRead));
-        }else{
-            throw new RuntimeException("Invalid operation type");
-        }
-    }*/
+    public int getSrcPort() {
+        return this.sourcePort;
+    }
 
     @Override
     public String toString() {

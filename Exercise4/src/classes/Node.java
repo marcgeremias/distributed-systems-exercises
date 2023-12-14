@@ -1,10 +1,8 @@
 package classes;
 
 import business.FileManager;
-import org.glassfish.tyrus.server.Server;
 
-import javax.websocket.DeploymentException;
-import javax.websocket.server.ServerEndpoint;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
@@ -33,7 +31,6 @@ public abstract class Node implements Runnable{
         startNodeServer();
     }
 
-
     @Override
     public void run() {
         while(true){
@@ -61,7 +58,6 @@ public abstract class Node implements Runnable{
             throw new RuntimeException(e);
         }
     }
-
 
     protected LinkedList<String> getSameLayerLinkedNodes(){
         LinkedList<String> sameLayerLinkedNodes = new LinkedList<>();
@@ -110,12 +106,48 @@ public abstract class Node implements Runnable{
     protected void executeTransaction(Transaction transaction){
         for(Operation operation : transaction.getOperations()){
             if(operation.getType().equals(Operation.OPERATION_WRITE)){
-                replicatedHashmap.put(operation.getKey(),operation.getValue());
+                writeLog(operation.getKey(),operation.getValue()); // w (a,b) -> write the value b in the hashmap with key a
             }else if(operation.getType().equals(Operation.OPERATION_READ)){
-                // TODO: Make read log
+                readLog(operation.getKey()); // r (a) -> read the value of key a from the hashmap
             }
         }
         FileManager.writeNewLog(this.id, replicatedHashmap);
+    }
+
+    private void writeLog(int key, int value) {
+        replicatedHashmap.put(key,value);
+        System.out.println("Node " + id + " wrote in " + key + " -> Value of:" + value);
+    }
+
+    private void readLog(int key) {
+        if(replicatedHashmap.containsKey(key)){
+            System.out.println("Node " + id + " read " + key + " -> " + replicatedHashmap.get(key));
+        }else{
+            System.out.println("ERROR: Node " + id + " read " + key + " is NULL");
+        }
+    }
+
+    void sendOKToSrc(Message message) {
+        ArrayList<Integer> destPorts = new ArrayList<>();
+        int srcPort = message.getSrcPort();
+        // Getting all ports into destPorts except the source port
+        for (String node : linkedNodes) {
+            if (nodePorts.get(node) != srcPort) {
+                destPorts.add(nodePorts.get(node));
+            }
+        }
+        // Considering that the core layer is the only one that works with the eager replication
+        // We need to run all the nodes sending OK to the source
+        for (Integer destPort : destPorts) {
+            sendOK(message, srcPort, destPort);
+        }
+    }
+
+    void sendOK(Message message, int srcPort, int destPort) {
+        // If I receive a message, send OK to the node that sent the message
+        Message msgOK = new Message(message.getPayloadTransaction(), Message.MESSAGE_TYPE_OK, destPort);
+        System.out.println("Port:" + destPort + ", send a OK message to port: " + srcPort);
+        Message.sendMessage(msgOK, srcPort);
     }
 
     protected abstract void processMessage(Message msg);

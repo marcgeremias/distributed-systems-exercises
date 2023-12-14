@@ -24,7 +24,14 @@ public class NodeCoreLayer extends Node {
                 System.out.println("Received transaction " + msg.getPayloadTransaction().toString() + " from client");
                 // 1. Eager replication, send received "recipe" to all nodes before executing it
                 sameLayerBroadcast(new Message(msg.getPayloadTransaction(), Message.MESSAGE_TYPE_TRANSACTION_RECIPE));
-                // TODO 2. Wait for all nodes to send OK (we need to add a counter to know how many OKs we have received)
+
+
+                //Message message = new Message(msg.getPayloadTransaction(), Message.MESSAGE_TYPE_TRANSACTION_RECIPE, port);
+                //sameLayerBroadcast(message);
+                // Wait for all the nodes of the core layer to send OK
+                //sendOKToSrc(message);
+
+
                 // 2. Execute transaction operations
                 executeTransaction(msg.getPayloadTransaction());
                 // 3. Send OK to client

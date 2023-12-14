@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/distributed-systems-exercises.iml" filepath="$PROJECT_DIR$/distributed-systems-exercises.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/distributed-systems-exercises.iml" filepath="$PROJECT_DIR$/.idea/distributed-systems-exercises.iml" />
     </modules>
   </component>
 </project>
