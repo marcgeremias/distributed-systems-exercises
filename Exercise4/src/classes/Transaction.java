@@ -5,9 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Transaction implements Serializable {
-    public static final int CORE_LAYER = 0;
-    public static final int FIRST_LAYER = 1;
-    public static final int SECOND_LAYER = 2;
     private ArrayList<Operation> operations;
     private boolean readOnly = false;
     private int layer;

@@ -81,7 +81,7 @@ public class FileManager {
                 String line = bufferedReader.readLine();
                 String[] lineSplit = line.split("\\s*,\\s*"); //         String[] operationSplit = rawOperation.split("[()]");
                 if(lineSplit[0].equals("b")){ // Not read only (Must be executed in the core layer)
-                    currentTransaction = new Transaction(false, Transaction.CORE_LAYER);
+                    currentTransaction = new Transaction(false, Node.CORE_LAYER);
                 }else{ // Read only (Can be executed in any layer)
                     currentTransaction = new Transaction(true, Integer.parseInt(lineSplit[0].substring(2,3)));
                 }

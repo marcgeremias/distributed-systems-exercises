@@ -17,8 +17,8 @@ public class NodeFirstLayer extends Node {
      */
 
     @Override
-    protected void processMessage(Message msg) {
-        Transaction transaction = msg.getPayloadTransaction();
-        System.out.println("Node " + id + " from layer " + this.getClass().getSimpleName() + " received transaction " + transaction.toString());
+    protected void processMessage() {
+        //Transaction transaction = msg.getPayloadTransaction();
+        //System.out.println("Node " + id + " from layer " + this.getClass().getSimpleName() + " received transaction " + transaction.toString());
     }
 }

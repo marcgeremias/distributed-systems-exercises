@@ -10,6 +10,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 public abstract class Node implements Runnable{
+    public static final int CORE_LAYER = 0;
+    public static final int FIRST_LAYER = 1;
+    public static final int SECOND_LAYER = 2;
     protected HashMap<Integer,Integer> replicatedHashmap;
     protected HashMap<String,Integer> nodePorts;
     protected ArrayList<String>[] nodesPerLayer;
@@ -33,10 +36,7 @@ public abstract class Node implements Runnable{
 
     @Override
     public void run() {
-        while(true){
-            Message msg = Message.getMessage(nodeServerSocket);
-            processMessage(msg);
-        }
+        processMessage();
     }
 
     @Override
@@ -95,6 +95,7 @@ public abstract class Node implements Runnable{
         for(String node : getSameLayerLinkedNodes()){
             Message.sendMessage(msg, nodePorts.get(node));
         }
+        System.out.println(getSameLayerLinkedNodes());
     }
 
     protected void differentLayerBroadcast(Message msg){
@@ -106,9 +107,9 @@ public abstract class Node implements Runnable{
     protected void executeTransaction(Transaction transaction){
         for(Operation operation : transaction.getOperations()){
             if(operation.getType().equals(Operation.OPERATION_WRITE)){
-                writeLog(operation.getKey(),operation.getValue()); // w (a,b) -> write the value b in the hashmap with key a
+                //writeLog(operation.getKey(),operation.getValue()); // w (a,b) -> write the value b in the hashmap with key a
             }else if(operation.getType().equals(Operation.OPERATION_READ)){
-                readLog(operation.getKey()); // r (a) -> read the value of key a from the hashmap
+                //readLog(operation.getKey()); // r (a) -> read the value of key a from the hashmap
             }
         }
         FileManager.writeNewLog(this.id, replicatedHashmap);
@@ -152,6 +153,6 @@ public abstract class Node implements Runnable{
         Message.sendMessage(msgOK, srcPort);
     }
 
-    protected abstract void processMessage(Message msg);
+    protected abstract void processMessage();
 
 }

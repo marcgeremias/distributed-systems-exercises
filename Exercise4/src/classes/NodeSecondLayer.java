@@ -16,8 +16,8 @@ public class NodeSecondLayer extends Node{
       - Lazy = S'executa la operació encara que encara no s'hagi assegurat la consistència de les dades
     */
     @Override
-    protected void processMessage(Message msg) {
-        Transaction transaction = msg.getPayloadTransaction();
-        System.out.println("Node " + id + " from layer " + this.getClass().getSimpleName() + " received transaction " + transaction.toString());
+    protected void processMessage() {
+        //Transaction transaction = msg.getPayloadTransaction();
+        //System.out.println("Node " + id + " from layer " + this.getClass().getSimpleName() + " received transaction " + transaction.toString());
     }
 }
