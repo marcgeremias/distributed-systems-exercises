@@ -36,7 +36,6 @@ public class NodeCoreLayer extends Node {
                     System.out.println("Received transaction " + msg.getPayloadTransaction().toString() + " from client");
                     // 1. Eager replication, send received "recipe" to all nodes before executing it
                     sameLayerBroadcast(new Message(msg.getPayloadTransaction(), Message.MESSAGE_TYPE_TRANSACTION_RECIPE, port));
-
                     // 2. Wait for all nodes to send OK
                     while(nOks < nodesPerLayer[CORE_LAYER].size() - 1){
                         Message okMsg = Message.getMessage(nodeServerSocket);
@@ -55,11 +54,7 @@ public class NodeCoreLayer extends Node {
                     // 1. Execute the transaction recipe
                     executeTransaction(msg.getPayloadTransaction());
                     // 2. Send OK to the source node
-
-
-                    Message okMsg = new Message(Message.MESSAGE_TYPE_OK);
-                    Message.sendMessage(okMsg, msg.getSrcPort());
-                    //sendOKMsg(msg, port, msg.getSrcPort());
+                    Message.sendMessage(new Message(Message.MESSAGE_TYPE_OK), msg.getSrcPort());
                     // 3. If the transaction contains write operations increment nUpdates
                     if(msg.getPayloadTransaction().containsNotReadOnlyOperation()) nUpdates++;
                     break;
