@@ -1,5 +1,7 @@
 package classes;
 
+import business.WebSocketServerEndpoint;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -39,7 +41,7 @@ public class NodeCoreLayer extends Node {
                     // 3. Execute transaction operations
                     executeTransaction(msg.getPayloadTransaction());
                     // 4. Send OK to client
-                    Message.sendMessage(new Message(Message.MESSAGE_TYPE_OK), clientPort);
+                    Message.sendMessage(new Message(replicatedHashmap, port, Message.MESSAGE_TYPE_OK), clientPort);
                     // 5. If the transaction contains write operations increment nUpdates
                     nUpdates += msg.getPayloadTransaction().nNotReadOnlyOperations();
                     break;
@@ -56,12 +58,10 @@ public class NodeCoreLayer extends Node {
                     throw new RuntimeException("Unknown message type");
             }
 
-            /* TODO: Replication on the bootom
-
             if(nUpdates == UPDATES_TO_REPLICATE){
-                differentLayerBroadcast(new Message(replicatedHashmap, port));
+                differentLayerBroadcast(new Message(replicatedHashmap, port, Message.MESSAGE_TYPE_REPLICATED_HASHMAP));
                 nOks=0;
-            }*/
+            }
 
 
         }

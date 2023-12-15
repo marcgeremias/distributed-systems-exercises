@@ -52,7 +52,7 @@ public class ClientManager {
         if(!transaction.isReadOnly()){
             Message nodeResponse = Message.getMessage(clientServerSocket);
             if(nodeResponse.getMessageType() == Message.MESSAGE_TYPE_OK){
-                System.out.println("Transaction " + transaction + " OK");
+                System.out.println("Result of transaction " + transaction + " =\n" + nodeResponse.getReplicatedHashmap());
             }else if(nodeResponse.getMessageType() == Message.MESSAGE_TYPE_KO){
                 throw new RuntimeException("Transaction " + transaction + " ERROR");
             }

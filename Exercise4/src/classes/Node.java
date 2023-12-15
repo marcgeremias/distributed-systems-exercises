@@ -1,6 +1,7 @@
 package classes;
 
 import business.FileManager;
+import business.WebSocketServerEndpoint;
 
 
 import java.io.IOException;
@@ -112,8 +113,9 @@ public abstract class Node implements Runnable{
             }else if(operation.getType().equals(Operation.OPERATION_READ)){
                 //readLog(operation.getKey()); // r (a) -> read the value of key a from the hashmap
             }
+            FileManager.updateNodeLog(this.id, replicatedHashmap);
+            WebSocketServerEndpoint.sendAllLogs();
         }
-        FileManager.writeNewLog(this.id, replicatedHashmap);
     }
 
     /*private void writeLog(int key, int value) {
