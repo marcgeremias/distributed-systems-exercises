@@ -15,6 +15,7 @@ public class Message implements Serializable {
     private Transaction payloadTransaction;
     private int messageType;
     private int sourcePort;
+    // TODO: Add sourcePort to all the constructors?
 
     public Message(Transaction payloadTransaction, int messageType) {
         this.payloadTransaction = payloadTransaction;

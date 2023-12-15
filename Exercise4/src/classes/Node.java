@@ -95,7 +95,6 @@ public abstract class Node implements Runnable{
         for(String node : getSameLayerLinkedNodes()){
             Message.sendMessage(msg, nodePorts.get(node));
         }
-        System.out.println(getSameLayerLinkedNodes());
     }
 
     protected void differentLayerBroadcast(Message msg){
@@ -107,6 +106,7 @@ public abstract class Node implements Runnable{
     protected void executeTransaction(Transaction transaction){
         for(Operation operation : transaction.getOperations()){
             if(operation.getType().equals(Operation.OPERATION_WRITE)){
+                replicatedHashmap.put(operation.getKey(),operation.getValue());
                 //writeLog(operation.getKey(),operation.getValue()); // w (a,b) -> write the value b in the hashmap with key a
             }else if(operation.getType().equals(Operation.OPERATION_READ)){
                 //readLog(operation.getKey()); // r (a) -> read the value of key a from the hashmap
@@ -115,7 +115,7 @@ public abstract class Node implements Runnable{
         FileManager.writeNewLog(this.id, replicatedHashmap);
     }
 
-    private void writeLog(int key, int value) {
+    /*private void writeLog(int key, int value) {
         replicatedHashmap.put(key,value);
         System.out.println("Node " + id + " wrote in " + key + " -> Value of:" + value);
     }
@@ -126,7 +126,7 @@ public abstract class Node implements Runnable{
         }else{
             System.out.println("ERROR: Node " + id + " read " + key + " is NULL");
         }
-    }
+    }*/
 
     /*
     void sendOKToSrc(Message message) {
@@ -146,12 +146,12 @@ public abstract class Node implements Runnable{
     }
      */
 
-    void sendOKMsg(Message message, int srcPort, int destPort) {
+    /*void sendOKMsg(Message message, int srcPort, int destPort) {
         // If I receive a message, send OK to the node that sent the message
         Message msgOK = new Message(message.getPayloadTransaction(), Message.MESSAGE_TYPE_OK, destPort);
         System.out.println("Port: " + destPort + ", send a OK message to port: " + srcPort);
         Message.sendMessage(msgOK, srcPort);
-    }
+    }*/
 
     protected abstract void processMessage();
 
