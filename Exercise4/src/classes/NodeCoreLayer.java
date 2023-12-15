@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class NodeCoreLayer extends Node {
+    private static final int UPDATES_TO_REPLICATE = 10;
     private int nUpdates; /// write == update
     private int nOks;
 
@@ -18,13 +19,6 @@ public class NodeCoreLayer extends Node {
           - Active = Es passa la recepta (en el nostre cas en concret les transaccions a fer a la resta de nodes)
           - Eager replication = No executa l'operació entrant fins que s'ha assegurat la consistència de les dades
     */
-
-    /*
-    Message message = new Message(msg.getPayloadTransaction(), Message.MESSAGE_TYPE_TRANSACTION_RECIPE, port);
-    sameLayerBroadcast(message);
-    // Wait for all the nodes of the core layer to send OK
-    sendOKToSrc(message);
-     */
 
     @Override
     protected void processMessage() {
@@ -47,7 +41,7 @@ public class NodeCoreLayer extends Node {
                     // 4. Send OK to client
                     Message.sendMessage(new Message(Message.MESSAGE_TYPE_OK), clientPort);
                     // 5. If the transaction contains write operations increment nUpdates
-                    if(msg.getPayloadTransaction().containsNotReadOnlyOperation()) nUpdates++;
+                    nUpdates += msg.getPayloadTransaction().nNotReadOnlyOperations();
                     break;
                 case Message.MESSAGE_TYPE_TRANSACTION_RECIPE:
                     System.out.println("Received transaction recipe " + msg.getPayloadTransaction().toString());
@@ -56,11 +50,20 @@ public class NodeCoreLayer extends Node {
                     // 2. Send OK to the source node
                     Message.sendMessage(new Message(Message.MESSAGE_TYPE_OK), msg.getSrcPort());
                     // 3. If the transaction contains write operations increment nUpdates
-                    if(msg.getPayloadTransaction().containsNotReadOnlyOperation()) nUpdates++;
+                    nUpdates += msg.getPayloadTransaction().nNotReadOnlyOperations();
                     break;
                 default:
                     throw new RuntimeException("Unknown message type");
             }
+
+            /* TODO: Replication on the bootom
+
+            if(nUpdates == UPDATES_TO_REPLICATE){
+                differentLayerBroadcast(new Message(replicatedHashmap, port));
+                nOks=0;
+            }*/
+
+
         }
     }
 }

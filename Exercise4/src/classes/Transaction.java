@@ -48,13 +48,12 @@ public class Transaction implements Serializable {
         return stringBuilder.toString();
     }
 
-    public boolean containsNotReadOnlyOperation(){
+    public int nNotReadOnlyOperations(){
+        int nNotReadOnlyOperations = 0;
         for (Operation operation : operations) {
-            if(operation.getType().equals(Operation.OPERATION_WRITE)){
-                return true;
-            }
+            if(operation.getType().equals(Operation.OPERATION_WRITE)) nNotReadOnlyOperations++;
         }
-        return false;
+        return nNotReadOnlyOperations;
     }
 
 

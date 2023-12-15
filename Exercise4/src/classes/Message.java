@@ -23,10 +23,11 @@ public class Message implements Serializable {
         this.messageType = messageType;
     }
 
-    public Message(HashMap<Integer, Integer> replicatedHashmap) {
+    public Message(HashMap<Integer, Integer> replicatedHashmap, int sourcePort) {
         this.replicatedHashmap = replicatedHashmap;
         this.payloadTransaction = null;
         this.messageType = MESSAGE_TYPE_REPLICATED_HASHMAP;
+        this.sourcePort = sourcePort;
     }
 
     public Message(int messageType) {

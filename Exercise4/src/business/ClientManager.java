@@ -61,7 +61,7 @@ public class ClientManager {
         }
 
         try {
-            sleep(3000); // DEBUGGING
+            sleep(1000); // DEBUGGING
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
