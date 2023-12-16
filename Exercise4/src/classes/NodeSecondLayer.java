@@ -17,7 +17,20 @@ public class NodeSecondLayer extends Node{
     */
     @Override
     protected void processMessage() {
-        //Transaction transaction = msg.getPayloadTransaction();
-        //System.out.println("Node " + id + " from layer " + this.getClass().getSimpleName() + " received transaction " + transaction.toString());
+        while (true) {
+            Message msg = Message.getMessage(nodeServerSocket);
+
+            switch (msg.getMessageType()) {
+                case Message.MESSAGE_TYPE_REPLICATED_HASHMAP:
+                    System.out.println("Received transaction " + msg.getPayloadTransaction().toString() + " from node port" + msg.getSrcPort());
+                    // 1. Update replicatedHashmap
+                    replicatedHashmap = msg.getReplicatedHashmap();
+                    // 2. Lazy -> Execute transaction operations
+                    executeTransaction(msg.getPayloadTransaction());
+                    break;
+                default:
+                    throw new RuntimeException("Unknown message type incoming to the second layer");
+            }
+        }
     }
 }

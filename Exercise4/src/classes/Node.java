@@ -104,6 +104,7 @@ public abstract class Node implements Runnable{
         }
     }
 
+    // TODO: Check if this is correct becasue FIRST_LAYER const is not used anywhere
     protected void differentLayerBroadcast(Message msg){
         for(String node : getDifferentLayerLinkedNodes()){
             Message.sendMessage(msg, nodePorts.get(node));
@@ -135,31 +136,6 @@ public abstract class Node implements Runnable{
         }else{
             System.out.println("ERROR: Node " + id + " read " + key + " is NULL");
         }
-    }*/
-
-    /*
-    void sendOKToSrc(Message message) {
-        ArrayList<Integer> destPorts = new ArrayList<>();
-        int srcPort = message.getSrcPort();
-        // Getting all ports into destPorts except the source port
-        for (String node : linkedNodes) {
-            if (nodePorts.get(node) != srcPort) {
-                destPorts.add(nodePorts.get(node));
-            }
-        }
-        // Considering that the core layer is the only one that works with the eager replication
-        // We need to run all the nodes sending OK to the source
-        for (Integer destPort : destPorts) {
-            sendOK(message, srcPort, destPort);
-        }
-    }
-     */
-
-    /*void sendOKMsg(Message message, int srcPort, int destPort) {
-        // If I receive a message, send OK to the node that sent the message
-        Message msgOK = new Message(message.getPayloadTransaction(), Message.MESSAGE_TYPE_OK, destPort);
-        System.out.println("Port: " + destPort + ", send a OK message to port: " + srcPort);
-        Message.sendMessage(msgOK, srcPort);
     }*/
 
     protected abstract void processMessage();
