@@ -15,11 +15,10 @@ import java.util.Set;
 public class WebSocketServerEndpoint {
     private static final Set<Session> sessions = new HashSet<>();
 
-    // TODO OPERATIVE: Only send logs that have been modified since last time, not all of them
-    public static void sendAllLogs() {
+    public static void sentToAllSessions(String msg) {
         for (Session session : sessions) {
             try {
-                session.getBasicRemote().sendText(FileManager.readAllLogs());
+                session.getBasicRemote().sendText(msg);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -29,12 +28,6 @@ public class WebSocketServerEndpoint {
     @OnOpen
     public void onOpen(Session session) {
         System.out.println("[SERVER]: Handshake successful - Connected - Session ID: " + session.getId());
-        // Send the current logs to the new client
-        try {
-            session.getBasicRemote().sendText(FileManager.readAllLogs());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
         sessions.add(session);
     }
 

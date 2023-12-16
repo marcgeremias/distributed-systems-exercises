@@ -98,13 +98,6 @@ public abstract class Node implements Runnable{
         }
     }
 
-    protected void secondLayerBroadcast(Message msg){
-        for(String node : nodesPerLayer[SECOND_LAYER]){
-            Message.sendMessage(msg, nodePorts.get(node));
-        }
-    }
-
-    // TODO: Check if this is correct becasue FIRST_LAYER const is not used anywhere
     protected void differentLayerBroadcast(Message msg){
         for(String node : getDifferentLayerLinkedNodes()){
             Message.sendMessage(msg, nodePorts.get(node));
@@ -120,24 +113,10 @@ public abstract class Node implements Runnable{
             }else if(operation.getType().equals(Operation.OPERATION_READ)){
                 //readLog(operation.getKey()); // r (a) -> read the value of key a from the hashmap
             }
-            FileManager.updateNodeLog(this.id, replicatedHashmap);
-            WebSocketServerEndpoint.sendAllLogs();
         }
+        FileManager.writeNewLog(this.id, replicatedHashmap);
+        WebSocketServerEndpoint.sentToAllSessions(id + ":" + replicatedHashmap.toString());
     }
-
-    /*private void writeLog(int key, int value) {
-        replicatedHashmap.put(key,value);
-        System.out.println("Node " + id + " wrote in " + key + " -> Value of:" + value);
-    }
-
-    private void readLog(int key) {
-        if(replicatedHashmap.containsKey(key)){
-            System.out.println("Node " + id + " read " + key + " -> " + replicatedHashmap.get(key));
-        }else{
-            System.out.println("ERROR: Node " + id + " read " + key + " is NULL");
-        }
-    }*/
-
     protected abstract void processMessage();
 
 }

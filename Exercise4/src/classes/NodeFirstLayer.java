@@ -12,10 +12,10 @@ public class NodeFirstLayer extends Node {
         super(nodePorts, linkedNodes, id, port, clientPort, nodesPerLayer);
         timer = new Timer();
 
-        startTimer();
+        //startTimer();
     }
 
-    private void startTimer() {
+    /*private void startTimer() {
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -27,7 +27,7 @@ public class NodeFirstLayer extends Node {
 
     public void stopTimer() {
         timer.cancel();
-    }
+    }*/
 
     @Override
     protected void processMessage() {
@@ -36,11 +36,8 @@ public class NodeFirstLayer extends Node {
 
             switch (msg.getMessageType()) {
                 case Message.MESSAGE_TYPE_REPLICATED_HASHMAP:
-                    System.out.println("Received transaction " + msg.getPayloadTransaction().toString() + " from node port" + msg.getSrcPort());
                     // 1. Update replicatedHashmap
                     replicatedHashmap = msg.getReplicatedHashmap();
-                    // 2. Lazy -> Execute transaction operations
-                    executeTransaction(msg.getPayloadTransaction());
                     break;
                 default:
                     throw new RuntimeException("Unknown message type incoming to the first layer");

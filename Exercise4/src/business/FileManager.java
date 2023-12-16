@@ -162,21 +162,12 @@ public class FileManager {
         return -1;
     }
 
-    public static void updateNodeLog(String nodeId, HashMap<Integer, Integer> replicatedHashmap) {
+    public static void writeNewLog (String nodeId, HashMap<Integer, Integer> replicatedHashmap) {
         String path = PATH_BASE_NODES_LOGS + nodeId + ".txt";
-        StringBuilder sb = new StringBuilder();
         try {
             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path, false));
             // TODO: Make the hashmap look better
-            sb.append("{\n");
-            for (Map.Entry<Integer, Integer> entry : replicatedHashmap.entrySet()) {
-                sb.append(entry.getKey()).append(" -> ").append(entry.getValue()).append("\n");
-            }
-            sb.append("}");
-            bufferedWriter.write(sb.toString());
-
-
-            //bufferedWriter.write(String.valueOf(replicatedHashmap));
+            bufferedWriter.write(String.valueOf(replicatedHashmap));
             bufferedWriter.newLine();
             bufferedWriter.close();
         } catch (IOException e) {

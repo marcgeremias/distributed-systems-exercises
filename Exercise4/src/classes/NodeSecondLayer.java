@@ -18,7 +18,7 @@ public class NodeSecondLayer extends Node{
     @Override
     protected void processMessage() {
         while (true) {
-            Message msg = Message.getMessage(nodeServerSocket);
+        /*    Message msg = Message.getMessage(nodeServerSocket);
 
             switch (msg.getMessageType()) {
                 case Message.MESSAGE_TYPE_REPLICATED_HASHMAP:
@@ -30,7 +30,7 @@ public class NodeSecondLayer extends Node{
                     break;
                 default:
                     throw new RuntimeException("Unknown message type incoming to the second layer");
-            }
+            }*/
         }
     }
 }
