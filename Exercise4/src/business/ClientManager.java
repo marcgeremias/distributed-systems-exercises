@@ -58,6 +58,8 @@ public class ClientManager {
             }
         }else{
             // TODO: Read only transaction in any layer
+            // To any node of the transaction layer
+            Message.sendMessage(new Message(Message.MESSAGE_TYPE_OK),nodePorts.get(linkedNodes[transaction.getLayer()].get(randomNode)));
         }
 
         try {

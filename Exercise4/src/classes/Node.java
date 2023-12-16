@@ -108,7 +108,6 @@ public abstract class Node implements Runnable{
         for(String node : getDifferentLayerLinkedNodes()){
             Message.sendMessage(msg, nodePorts.get(node));
         }
-        System.out.println(getDifferentLayerLinkedNodes());
     }
 
     protected void executeTransaction(Transaction transaction){

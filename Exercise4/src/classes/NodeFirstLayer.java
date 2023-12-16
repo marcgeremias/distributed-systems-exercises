@@ -12,15 +12,11 @@ import static java.lang.Thread.sleep;
 
 public class NodeFirstLayer extends Node {
     private static final int MILISECONDS_TIME_TO_WAIT = 10000;
-    private Timer timer;
 
     public NodeFirstLayer(HashMap<String, Integer> nodePorts, ArrayList<String> linkedNodes, String id, Integer port, Integer clientPort, ArrayList<String>[] nodesPerLayer) {
         super(nodePorts, linkedNodes, id, port, clientPort, nodesPerLayer);
-        //timer = new Timer();
         Thread listenLightweights = new Thread(this::waitToReplicate);
         listenLightweights.start();
-
-        //startTimer();
     }
 
         private void waitToReplicate() {
@@ -31,7 +27,6 @@ public class NodeFirstLayer extends Node {
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-
             }
         }
 
