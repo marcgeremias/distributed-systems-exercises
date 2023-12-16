@@ -1,7 +1,5 @@
 package classes;
 
-import business.WebSocketServerEndpoint;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -55,7 +53,7 @@ public class NodeCoreLayer extends Node {
                     nUpdates += msg.getPayloadTransaction().nNotReadOnlyOperations();
                     break;
                 default:
-                    throw new RuntimeException("Unknown message type");
+                    throw new RuntimeException("Unknown message type incoming to core layer");
             }
 
             if(nUpdates == UPDATES_TO_REPLICATE){
