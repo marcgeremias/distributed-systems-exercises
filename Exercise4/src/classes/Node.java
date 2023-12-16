@@ -98,6 +98,12 @@ public abstract class Node implements Runnable{
         }
     }
 
+    protected void secondLayerBroadcast(Message msg){
+        for(String node : nodesPerLayer[SECOND_LAYER]){
+            Message.sendMessage(msg, nodePorts.get(node));
+        }
+    }
+
     protected void differentLayerBroadcast(Message msg){
         for(String node : getDifferentLayerLinkedNodes()){
             Message.sendMessage(msg, nodePorts.get(node));

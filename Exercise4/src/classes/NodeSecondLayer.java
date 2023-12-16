@@ -1,5 +1,8 @@
 package classes;
 
+import business.FileManager;
+import business.WebSocketServerEndpoint;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -18,19 +21,19 @@ public class NodeSecondLayer extends Node{
     @Override
     protected void processMessage() {
         while (true) {
-        /*    Message msg = Message.getMessage(nodeServerSocket);
+            Message msg = Message.getMessage(nodeServerSocket);
 
             switch (msg.getMessageType()) {
                 case Message.MESSAGE_TYPE_REPLICATED_HASHMAP:
-                    System.out.println("Received transaction " + msg.getPayloadTransaction().toString() + " from node port" + msg.getSrcPort());
                     // 1. Update replicatedHashmap
                     replicatedHashmap = msg.getReplicatedHashmap();
-                    // 2. Lazy -> Execute transaction operations
-                    executeTransaction(msg.getPayloadTransaction());
+                    // 2. Write new log
+                    FileManager.writeNewLog(this.id, replicatedHashmap);
+                    WebSocketServerEndpoint.sentToAllSessions(id + ":" + replicatedHashmap.toString());
                     break;
                 default:
                     throw new RuntimeException("Unknown message type incoming to the second layer");
-            }*/
+            }
         }
     }
 }

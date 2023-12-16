@@ -58,7 +58,7 @@ public class NodeCoreLayer extends Node {
 
             if(nUpdates == UPDATES_TO_REPLICATE){
                 differentLayerBroadcast(new Message(replicatedHashmap, port, Message.MESSAGE_TYPE_REPLICATED_HASHMAP));
-                nOks=0;
+                nUpdates=0;
             }
 
 

@@ -1,33 +1,39 @@
 package classes;
 
+import business.FileManager;
+import business.WebSocketServerEndpoint;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static java.lang.Thread.sleep;
+
 public class NodeFirstLayer extends Node {
+    private static final int MILISECONDS_TIME_TO_WAIT = 10000;
     private Timer timer;
 
     public NodeFirstLayer(HashMap<String, Integer> nodePorts, ArrayList<String> linkedNodes, String id, Integer port, Integer clientPort, ArrayList<String>[] nodesPerLayer) {
         super(nodePorts, linkedNodes, id, port, clientPort, nodesPerLayer);
-        timer = new Timer();
+        //timer = new Timer();
+        Thread listenLightweights = new Thread(this::waitToReplicate);
+        listenLightweights.start();
 
         //startTimer();
     }
 
-    /*private void startTimer() {
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                secondLayerBroadcast(new Message(replicatedHashmap, port, Message.MESSAGE_TYPE_REPLICATED_HASHMAP));
-                System.out.println("Replicated hashmap sent to the second layer");
-            }
-        }, 0, 10000);
-    }
+        private void waitToReplicate() {
+            while(true){
+                try {
+                    sleep(MILISECONDS_TIME_TO_WAIT);
+                    secondLayerBroadcast(new Message(replicatedHashmap, port, Message.MESSAGE_TYPE_REPLICATED_HASHMAP));
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
 
-    public void stopTimer() {
-        timer.cancel();
-    }*/
+            }
+        }
 
     @Override
     protected void processMessage() {
@@ -38,6 +44,9 @@ public class NodeFirstLayer extends Node {
                 case Message.MESSAGE_TYPE_REPLICATED_HASHMAP:
                     // 1. Update replicatedHashmap
                     replicatedHashmap = msg.getReplicatedHashmap();
+                    // 2. Write new log
+                    FileManager.writeNewLog(this.id, replicatedHashmap);
+                    WebSocketServerEndpoint.sentToAllSessions(id + ":" + replicatedHashmap.toString());
                     break;
                 default:
                     throw new RuntimeException("Unknown message type incoming to the first layer");
