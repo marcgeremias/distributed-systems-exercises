@@ -28,14 +28,16 @@ public class NodeCoreLayer extends Node {
             switch(msg.getMessageType()){
                 case Message.MESSAGE_TYPE_TRANSACTION:
                     System.out.println("Received transaction " + msg.getPayloadTransaction().toString() + " from client");
-                    // 1. Eager replication, send received "recipe" to all nodes before executing it
-                    sameLayerBroadcast(new Message(msg.getPayloadTransaction(), Message.MESSAGE_TYPE_TRANSACTION_RECIPE, port));
-                    // 2. Wait for all nodes to send OK
-                    while(nOks < nodesPerLayer[CORE_LAYER].size() - 1){
-                        Message okMsg = Message.getMessage(nodeServerSocket);
-                        if(okMsg.getMessageType() == Message.MESSAGE_TYPE_OK) nOks++;
+                    if(!msg.getPayloadTransaction().isReadOnly()){
+                        // 1. Eager replication, send received "recipe" to all nodes before executing it
+                        sameLayerBroadcast(new Message(msg.getPayloadTransaction(), Message.MESSAGE_TYPE_TRANSACTION_RECIPE, port));
+                        // 2. Wait for all nodes to send OK
+                        while(nOks < nodesPerLayer[CORE_LAYER].size() - 1){
+                            Message okMsg = Message.getMessage(nodeServerSocket);
+                            if(okMsg.getMessageType() == Message.MESSAGE_TYPE_OK) nOks++;
+                        }
+                        nOks = 0;
                     }
-                    nOks = 0;
                     // 3. Execute transaction operations
                     executeTransaction(msg.getPayloadTransaction());
                     // 4. Send OK to client

@@ -72,7 +72,7 @@ public class FileManager {
     }
 
     public static ArrayList<Transaction> readTransactions() {
-        // TODO: CLEAN THIS SPAGHETTI CODE
+        // TODO(OPTIONAL): CLEAN THIS SPAGHETTI CODE
         ArrayList<Transaction> transactionsBatch = new ArrayList<>();
         try {
             bufferedReader = new BufferedReader(new FileReader(PATH_TRANSACTIONS));
@@ -166,7 +166,7 @@ public class FileManager {
         String path = PATH_BASE_NODES_LOGS + nodeId + ".txt";
         try {
             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path, false));
-            // TODO: Make the hashmap look better
+            // TODO (OPTIONAL): Make the hashmap look better
             bufferedWriter.write(String.valueOf(replicatedHashmap));
             bufferedWriter.newLine();
             bufferedWriter.close();
@@ -177,7 +177,7 @@ public class FileManager {
 
     public static String readAllLogs () {
         ArrayList<String>[] nodesPerLayer = FileManager.readLayerNodes();
-        // TODO: It can be improved to read each log and append it an array of strings
+        // TODO(OPTIONAL): It can be improved to read each log and append it an array of strings
         try {
             // For each node, read its log file and append it to the logs string
             StringBuilder logs = new StringBuilder();

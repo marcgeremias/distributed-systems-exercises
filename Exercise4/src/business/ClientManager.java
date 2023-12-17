@@ -49,17 +49,12 @@ public class ClientManager {
         Message.sendMessage(msg,nodePorts.get(linkedNodes[transaction.getLayer()].get(randomNode)));
         System.out.println("Sending to layer " + transaction.getLayer() + " node " + linkedNodes[transaction.getLayer()].get(randomNode));
 
-        if(!transaction.isReadOnly()){
-            Message nodeResponse = Message.getMessage(clientServerSocket);
-            if(nodeResponse.getMessageType() == Message.MESSAGE_TYPE_OK){
-                System.out.println("Result of transaction " + transaction + " =\n" + nodeResponse.getReplicatedHashmap());
-            }else if(nodeResponse.getMessageType() == Message.MESSAGE_TYPE_KO){
-                throw new RuntimeException("Transaction " + transaction + " ERROR");
-            }
-        }else{
-            // TODO: Read only transaction in any layer
-            // To any node of the transaction layer
-            Message.sendMessage(new Message(Message.MESSAGE_TYPE_OK),nodePorts.get(linkedNodes[transaction.getLayer()].get(randomNode)));
+        // Wait for response
+        Message nodeResponse = Message.getMessage(clientServerSocket);
+        if(nodeResponse.getMessageType() == Message.MESSAGE_TYPE_OK){
+            System.out.println("Result of transaction " + transaction + " =\n" + nodeResponse.getReplicatedHashmap());
+        }else if(nodeResponse.getMessageType() == Message.MESSAGE_TYPE_KO){
+            throw new RuntimeException("Transaction " + transaction + " ERROR");
         }
 
         try {
