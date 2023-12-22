@@ -1,12 +1,6 @@
 ﻿# Distributed Systems - Exercises
 
 <p align="center">
-  <a href="https://github.com/marcgeremias/distributed-systems-exercises/blob/main/README.md">
-    <img src="https://img.shields.io/badge/lang-en-red.svg">
-  </a>
-  <a href="https://github.com/marcgeremias/distributed-systems-exercises/blob/main/README.cat.md">
-    <img src="https://img.shields.io/badge/lang-cat-yellow.svg">
-  </a>
   <a href="https://github.com/marcgeremias">
     <img src="https://img.shields.io/badge/Development Stage-green.svg">
   </a>
