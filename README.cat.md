@@ -1,7 +1,16 @@
 # Distributed Systems - Exercises
 
-[![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/marcgeremias/distributed-systems-exercises/blob/main/README.md)
-[![cat](https://img.shields.io/badge/lang-cat-yellow.svg)](https://github.com/marcgeremias/distributed-systems-exercises/blob/main/README.cat.md)
+<p align="center">
+  <a href="https://github.com/marcgeremias/distributed-systems-exercises/blob/main/README.md">
+    <img src="https://img.shields.io/badge/lang-en-red.svg">
+  </a>
+  <a href="https://github.com/marcgeremias/distributed-systems-exercises/blob/main/README.cat.md">
+    <img src="https://img.shields.io/badge/lang-cat-yellow.svg">
+  </a>
+  <a href="https://github.com/marcgeremias">
+    <img src="https://img.shields.io/badge/Development Stage-green.svg">
+  </a>
+</p>
 
 En aquest repositori es troben els exercicis realitzats durant l'assignatura de Sistemes Distribuïts de 4t de carrera al grau d'Enginyeria Informàtica de La Salle Campus Barcelona.
 
